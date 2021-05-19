@@ -1,0 +1,176 @@
+body{
+  background-color : #6fb8b9;
+  font-family : inter;
+}
+
+h1 {
+	color:black;
+	font-family: Spartan;
+	font-weight:bold;
+	text-align: center;
+}
+
+.general_index {
+    display : grid;
+    grid-template-columns : 45% 55%;
+    margin : 10px;
+}
+
+.formulaire_index {
+    padding : 5px;
+    margin : 10px;
+    align-self: start;
+}
+
+.item_formulaire_index {
+    margin: 10px;
+}
+
+.creneaux_index {
+    display : grid;
+    grid-template-columns : 40% 60%;
+    margin : 10px;
+    align-self: center;
+}
+
+.creneaux_index div:nth-child(odd) {
+    text-align : right;
+    margin : 10px;
+}
+
+.creneaux_index div:nth-child(even) {
+    text-align : left;
+    margin : 10px;
+}
+
+.validation_index {
+    margin : 20px;
+    padding-left : 20%;
+    padding-right : 20%;
+}
+
+.validation_index div {
+    margin : 10px;
+}
+
+textarea{
+  width: 90%;
+  height: 100px;
+}
+
+/** 
+*** déco des labels, checkbox/radio invisibles
+***/
+
+input[type="checkbox"]:not(.texteconsigne):not(.textergpd),input[type="radio"] {
+    display : none;
+}
+
+label[for]:not(.texteconsigne):not(.textergpd){  /* les labels des checkbox/radios */
+     display : inline-block;
+     border : 1px solid black;
+     padding : 5px;
+     margin : 5px;
+     top : 2px;
+     min-width : 15%;
+     border-radius : 15px;
+     background-color : #2687c9;
+     text-align : center;
+     color : white;
+ }
+ 
+label[for], input[type="checkbox"] {
+     cursor : pointer;
+ }
+
+button {   /* bouton validation formulaire */
+      border-radius : 15px;
+      width : 90%;
+      min-height : 50px;
+      top : 0px;
+      font-size : 1.2em;
+      background-color : #2687c9;
+      cursor : pointer;
+      color : white;
+}
+
+.radio{
+     display : block;
+     margin-top : 10px;
+     margin-bottom : 10px;
+ }
+
+/***
+*** partie spécifique selon le type d'appareil/la taille de l'écran
+***/
+
+@media screen and (max-device-width : 902px), (max-width : 902px){
+    
+.general_index {
+     grid-template-columns : 100%;
+}
+.creneaux_index {
+     grid-template-columns : 100%;
+}
+
+.consignesecurite {
+    width:30px;
+    height:30px;
+}
+
+textarea {
+    font-size : 1.2em;
+}
+
+.creneaux_index div:nth-child(odd) {
+    text-align : left;
+    margin : 3px;
+    margin-top : 20px;
+}
+.creneaux_index div:nth-child(even) {
+    margin : 2px;    
+}
+
+.creneaux_index div:nth-child(1) {
+    text-align : center;
+}
+
+.creneaux_index div:nth-child(2) {
+    text-align : center;
+}
+
+.validation_index {
+    padding : 0px;
+    margin : 5px;
+    text-align : center;
+}
+
+.validation_index>div {
+    text-align : left;
+}
+
+.centree {
+    display : inline-block;
+    text-align : center;
+}
+
+
+label[for]:not(.texteconsigne){
+    min-width : 20%;
+    margin : 10px;
+}
+}
+
+.grand {
+    min-width : 40%;
+}
+
+@media screen and (max-device-width : 320px) {
+   
+label[for]:not(.texteconsigne){
+    min-width : 25%;
+    padding : 2px;
+    margin : 3px;
+}
+
+}
