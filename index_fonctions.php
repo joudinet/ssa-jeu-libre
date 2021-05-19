@@ -7,9 +7,9 @@ ini_set("display_errors", 1);  // à commenter à la fin bien sûr
 require "general_fonctions.php";
 use PHPMailer\PHPMailer\PHPMailer; //pour le mail
 use PHPMailer\PHPMailer\SMTP;
-require 'PHPMailer-master/src/PHPMailer.php';
-require 'PHPMailer-master/src/SMTP.php';
-require 'PHPMailer-master/src/Exception.php';
+require 'PHPMailer/src/PHPMailer.php';
+require 'PHPMailer/src/SMTP.php';
+require 'PHPMailer/src/Exception.php';
 
 
 function envoie_mail_inscription($nom,$target,$creneau_demandes) {
@@ -18,7 +18,7 @@ function envoie_mail_inscription($nom,$target,$creneau_demandes) {
     $mail->From='jerome.99@hotmail.fr';
     $mail->FromName="L'équipe Sand-System";
     $mail->AddAddress($target);
-    $mail->AddReplyTo('jerome.99@hotmail.fr');     
+    $mail->AddReplyTo('jerome.99@hotmail.fr');
     $mail->ContentType = 'text/plain';
     $mail->Subject='Confirmation d\'inscription';
     $msg="Bonjour ".$nom."!\n\n"."Ton inscription à bien été prise en compte.\n"."Tu recevras un mail dès que les créneaux seront finalisés.\n\n"."Voici la liste des créneaux demandés :\n";
@@ -30,12 +30,12 @@ function envoie_mail_inscription($nom,$target,$creneau_demandes) {
     if( !$mail->Send()){ //Teste le return code de la fonction
         //echo 'Mailer Error: ' . $mail->ErrorInfo;
         $mail->SmtpClose();
-        unset($mail);         
+        unset($mail);
         return false;
     }
     //echo "<BR> Le mail qui sera envoyé : <BR><TEXTAREA style='width: 80%;heigth : 50px;'>".$msg."</TEXTAREA>";
     $mail->SmtpClose();
-    unset($mail);    
+    unset($mail);
     return true;
 }
 
@@ -44,8 +44,8 @@ function test_nom($nom,$prenom,$stmt) { //$stmt requete "nom,prenom" pour le ter
     while ($row=$stmt->fetch()) {
         if ($nom==$row['nom'] && $prenom==$row['prenom']) {
             return true;
-        }   
-    } 
+        }
+    }
     return false;
 }
 
@@ -56,11 +56,11 @@ function valide_formulaire () { // non utilisé : renvoie true/false si c'est r�
             echo "Formulaire incomplet";
             return false;
         }
-        if (!isset($_POST['consignesecurite'])) { 
+        if (!isset($_POST['consignesecurite'])) {
             echo "Il faut valider les consignes de sécurité pour pouvoir demander un créneau. ";
             return false;
         }
-        if (!isset($_POST['consignergpd'])) { 
+        if (!isset($_POST['consignergpd'])) {
             echo "Il faut autoriser Sand System à sauvegarder les données personnelles pour pouvoir demander un créneau. ";
             return false;
         }
@@ -72,7 +72,7 @@ function valide_formulaire () { // non utilisé : renvoie true/false si c'est r�
             echo "Il faut indiquer un niveau de jeu. ";
             return false;
         }
-        try { 
+        try {
             $res=$dbh->query('SELECT MAX(id) FROM DEMANDES');
             $iddemande=1;
             while ($row=$res->fetch()) {
@@ -136,7 +136,7 @@ function valide_formulaire () { // non utilisé : renvoie true/false si c'est r�
             $adherent=secu_bdd($_POST['adherent']);
             if (!in_array($adherent,["oui","non"])) {
                 echo "Il faut indiquer si tu êtes adhérent SandSystem ou non. ";
-                return false;    
+                return false;
             }
             $commentaire=secu_bdd($_POST['commentaire']);
             $les_creneaux=lire_les_creneaux();
@@ -154,7 +154,7 @@ function valide_formulaire () { // non utilisé : renvoie true/false si c'est r�
                         $affectation_reussie=false;
                         $stmt1->execute();
                         if (test_nom($nom,$prenom,$stmt1)) {
-                            echo "Tu es déjà inscrit pour ".secu_ecran(jolie_date($uncreneau['date'])).' '.secu_ecran($uncreneau['heure'])." en ".$typeterrain."\n"; 
+                            echo "Tu es déjà inscrit pour ".secu_ecran(jolie_date($uncreneau['date'])).' '.secu_ecran($uncreneau['heure'])." en ".$typeterrain."\n";
                         } else {
                             foreach (['1','2','3','4'] as $n) {
                                 $t='T'.$n;
@@ -170,7 +170,7 @@ function valide_formulaire () { // non utilisé : renvoie true/false si c'est r�
                                     $a[$n]+=1;
                                     $stmt3->execute();
                                 }
-                            } 
+                            }
                             if ($affectation_reussie) {
                                 array_push($creneau_demandes,[$uncreneau['date'],$uncreneau['heure'],$typeterrain]);
                                 $stmt->execute();
