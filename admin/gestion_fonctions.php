@@ -4,12 +4,12 @@ error_reporting(E_ALL); // pour activer les erreurs
 ini_set("display_errors", 1);  // à commenter à la fin bien sûr
 //penser à mettre la base de donénes en utf8 pour être sûr?
 
-require "general_fonctions.php";
+require "../general_fonctions.php";
 use PHPMailer\PHPMailer\PHPMailer; //pour le mail
 use PHPMailer\PHPMailer\SMTP;
-require 'PHPMailer/src/PHPMailer.php';
-require 'PHPMailer/src/SMTP.php';
-require 'PHPMailer/src/Exception.php';
+require '../PHPMailer/src/PHPMailer.php';
+require '../PHPMailer/src/SMTP.php';
+require '../PHPMailer/src/Exception.php';
 require('fpdf.php'); // pour le PDF
 
 function creationpdf($les_creneaux_demandes) {
