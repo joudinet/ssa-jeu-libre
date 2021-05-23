@@ -13,30 +13,29 @@ require 'PHPMailer/src/Exception.php';
 
 
 function envoie_mail_inscription($nom,$target,$creneau_demandes) {
+    global $mail_from, $mail_fromName;
+    $sent = true;
+
     $mail = new PHPmailer();
     $mail->CharSet = 'UTF-8';
-    $mail->From='jerome.99@hotmail.fr';
-    $mail->FromName="L'équipe Sand-System";
+    $mail->setFrom($mail_from, $mail_fromName);
     $mail->AddAddress($target);
-    $mail->AddReplyTo('jerome.99@hotmail.fr');
     $mail->ContentType = 'text/plain';
-    $mail->Subject='Confirmation d\'inscription';
+    $mail->Subject="Confirmation d'inscription";
     $msg="Bonjour ".$nom."!\n\n"."Ton inscription à bien été prise en compte.\n"."Tu recevras un mail dès que les créneaux seront finalisés.\n\n"."Voici la liste des créneaux demandés :\n";
     foreach ($creneau_demandes as $uncreneau) {
         $msg.=jolie_date($uncreneau[0]).", ".$uncreneau[1]." en ".$uncreneau[2]."\n";
     }
     $msg.="\n"."L'équipe SSA";
     $mail->Body=$msg;
-    if( !$mail->Send()){ //Teste le return code de la fonction
-        //echo 'Mailer Error: ' . $mail->ErrorInfo;
-        $mail->SmtpClose();
-        unset($mail);
-        return false;
+    if(!$mail->send()) {
+        echo 'Mailer Error: ' . $mail->ErrorInfo;
+        $sent = false;
     }
     //echo "<BR> Le mail qui sera envoyé : <BR><TEXTAREA style='width: 80%;heigth : 50px;'>".$msg."</TEXTAREA>";
     $mail->SmtpClose();
     unset($mail);
-    return true;
+    return $sent;
 }
 
 function test_nom($nom,$prenom,$stmt) { //$stmt requete "nom,prenom" pour le terrain à tester

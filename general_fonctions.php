@@ -1,5 +1,7 @@
 <?php
 
+require "config.php";
+
 setlocale(LC_TIME, 'fr_FR');   //pour l'affichage des dates
 date_default_timezone_set('Europe/Paris');
 
@@ -8,14 +10,14 @@ $terrainpossible=['reserve','feminin','mixte','masculin']; // champs autorisés 
 $couleurpossible=["#CBCBCB","#FF0099","#00CCFF","#33FF00"]; // reservé, féminin, mixte, masculin
 
 function lire_les_creneaux() { // renvoie les créneaux classés par ordre chronologique, en vérifiant les données
-    global $dbh,$terrainpossible,$couleurpossible;  
+    global $dbh,$terrainpossible,$couleurpossible;
     try {
         $res=$dbh->query('SELECT * FROM CRENEAUX ORDER BY date');
         $tab_res=[];
         while ($row=$res->fetch()) {
-            if (!in_array($row['C1'],$couleurpossible) || !in_array($row['C2'],$couleurpossible) || !in_array($row['C3'],$couleurpossible) || !in_array($row['C4'],$couleurpossible)) { 
+            if (!in_array($row['C1'],$couleurpossible) || !in_array($row['C2'],$couleurpossible) || !in_array($row['C3'],$couleurpossible) || !in_array($row['C4'],$couleurpossible)) {
                 throw new Exception('erreur');   }
-            if (!in_array($row['T1'],$terrainpossible) || !in_array($row['T2'],$terrainpossible) || !in_array($row['T3'],$terrainpossible) || !in_array($row['T4'],$terrainpossible)) { 
+            if (!in_array($row['T1'],$terrainpossible) || !in_array($row['T2'],$terrainpossible) || !in_array($row['T3'],$terrainpossible) || !in_array($row['T4'],$terrainpossible)) {
                 throw new Exception('erreur');   }
             array_push($tab_res,$row);
         }
@@ -31,7 +33,7 @@ function jolie_date($date) { // date sous forme  "jour numéro_jour mois " en le
 }
 
 function secu_bdd($string) {   // inutile avec requete préparée en utf-8 ?
-    return $string; 
+    return $string;
 }
 
 function secu_ecran($str) { //securise une donnée avant de l'afficher sur la page HTML
@@ -46,13 +48,15 @@ function secu_ecran_int($str) { //securise une donnée avant de l'afficher sur l
 }
 
 function ouvre_bdd() {
-    global $dbh;
+    global $dbh, $mysql_host, $mysql_dbname, $mysql_user, $mysql_pass;
+
     try {
-        $dbh = new PDO('mysql:host=localhost;dbname=................);   \\ à compléter avec la base utilisée
+        $dbh = new PDO('mysql:host=' . $mysql_host . ';dbname=' . $mysql_dbname,
+                       $mysql_user, $mysql_pass);
     } catch (PDOException $e) {
-        print "Erreur d'accès";
+        print "Connection error: " . $e->getMessage();
         die();
-    }    
+    }
     return;
 }
 

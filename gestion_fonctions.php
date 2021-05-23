@@ -85,7 +85,8 @@ function creationpdf($les_creneaux_demandes) {
 }
 
 function creationenvoi($les_creneaux_demandes) {
-    global $dbh,$les_creneaux;
+    global $dbh, $les_creneaux, $mail_from, $mail_fromName;
+
     creationpdf($les_creneaux_demandes);
     $liste_mail=[];
     $stmt = $dbh->prepare("SELECT mail FROM RESULTAT WHERE idcreneau=? AND (etat='valide' OR etat='attente')");
@@ -101,9 +102,7 @@ function creationenvoi($les_creneaux_demandes) {
     }
     $mail = new PHPmailer();
     $mail->CharSet = 'UTF-8';
-    $mail->From='jerome.99@hotmail.fr';
-    $mail->FromName="L'équipe Sand-System";
-    $mail->AddReplyTo('jerome.99@hotmail.fr');
+    $mail->setFrom($mail_from, $mail_fromName);
     $mail->ContentType = 'text/plain';
     $mail->Subject='Créneaux de jeu';
     $mail->Body="Bonjour!\n\n"."Voici, en pièce jointe, la répartition sur les créneaux pour la semaine.\n"."Bon jeu!\n\n"."L'équipe SSA";
@@ -111,7 +110,9 @@ function creationenvoi($les_creneaux_demandes) {
     foreach ($liste_mail as $target) {
         $mail->AddAddress($target);
     }
-    $mail->Send();
+    if (!$mail->send()) {
+        echo 'Mailer error: ' . $mail->ErrorInfo;
+    }
     $mail->SmtpClose();
     unset($mail);
 }
