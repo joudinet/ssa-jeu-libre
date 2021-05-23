@@ -10,7 +10,7 @@
     </HEAD>
 
 <?php
-require "../gestion_fonctions.php";
+require "gestion_fonctions.php";
 ?>
 
 <BODY><BR>
