@@ -1,4 +1,3 @@
-
 let LeFormulaire=document.getElementById("le_formulaire_index")
 let consignesecurite=document.getElementById("consignesecurite")
 let consignergpd=document.getElementById("consignergpd")
@@ -16,22 +15,22 @@ let ad1=document.getElementById("ad1")
 let ad2=document.getElementById("ad2")
 let adl1=document.getElementById("adl1")
 let adl2=document.getElementById("adl2")
-let adhesion=document.getElementById("adhesion")
+let adhesion=document.getElementById("adherer")
 let nom=document.getElementById("nom")
 let prenom=document.getElementById("prenom")
 let mail=document.getElementById("mail")
 let telephone=document.getElementById("telephone")
 
 window.onload = function () {
-    leschecked() 
-    lesradio() 
+    leschecked()
+    lesradio()
 }
 
 function test_feminin() {
     tab=document.getElementsByClassName("checkboxfeminin")
     res=false
     for (var unebox of tab) {
-        res=res || unebox.checked
+	res=res || unebox.checked
     }
     return res
 }
@@ -40,24 +39,24 @@ function test_masculin() {
     tab=document.getElementsByClassName("checkboxmasculin")
     res=false
     for (var unebox of tab) {
-        res=res || unebox.checked
+	res=res || unebox.checked
     }
     return res
 }
 
 function lesradio() {
-   jeul1.style.backgroundColor="#2687c9"       
-   jeul2.style.backgroundColor="#2687c9"       
-   jeul3.style.backgroundColor="#2687c9"       
-   jeul4.style.backgroundColor="#2687c9" 
-   adl1.style.backgroundColor="#2687c9"   
-   adl2.style.backgroundColor="#2687c9"   
-   jeul1.style.color="white"     
-   jeul2.style.color="white"      
-   jeul3.style.color="white"    
-   jeul4.style.color="white" 
-   adl1.style.color="white"  
-   adl2.style.color="white"   
+   jeul1.style.backgroundColor="#2687c9"
+   jeul2.style.backgroundColor="#2687c9"
+   jeul3.style.backgroundColor="#2687c9"
+   jeul4.style.backgroundColor="#2687c9"
+   adl1.style.backgroundColor="#2687c9"
+   adl2.style.backgroundColor="#2687c9"
+   jeul1.style.color="white"
+   jeul2.style.color="white"
+   jeul3.style.color="white"
+   jeul4.style.color="white"
+   adl1.style.color="white"
+   adl2.style.color="white"
    if (jeu1.checked) { jeul1.style.backgroundColor="#FAB315"; jeul1.style.color="black" }
    if (jeu2.checked) { jeul2.style.backgroundColor="#FAB315"; jeul2.style.color="black"  }
    if (jeu3.checked) { jeul3.style.backgroundColor="#FAB315"; jeul3.style.color="black" }
@@ -70,13 +69,13 @@ function leschecked() {
     tabinput=document.getElementById('creneauxdispos').getElementsByTagName("input")
     tablabel=document.getElementById('creneauxdispos').getElementsByTagName("label")
     for (i=0;i<tabinput.length;i++) {
-        if (tabinput[i].checked) {
-            tablabel[i].style.backgroundColor="#FAB315"
-            tablabel[i].style.color="black"
-        } else {
-            tablabel[i].style.backgroundColor="#2687c9"
-            tablabel[i].style.color="white"
-        }
+	if (tabinput[i].checked) {
+	    tablabel[i].style.backgroundColor="#FAB315"
+	    tablabel[i].style.color="black"
+	} else {
+	    tablabel[i].style.backgroundColor="#2687c9"
+	    tablabel[i].style.color="white"
+	}
     }
 }
 
@@ -93,69 +92,69 @@ ad1.onclick= function () {lesradio() ; pour_adherent();}
 ad2.onclick= function () {lesradio(); pas_adherent()}
 
 function pour_adherent() {
-    adhesion.style.display="none"
+  adhesion.style.display="none";
 }
 
 function pas_adherent() {
-    adhesion.style.display="block"
+  adhesion.style.display="block";
 }
 
 function click_creneau(id,type) { // type 0,1,2 : féminin, masculin,mixte       value de l'input : 0,1,2 : défaut, prio, pasprio
     let lesid=[document.getElementById("c"+id.toString()+"feminin")
-               ,document.getElementById("c"+id.toString()+"masculin")
-               ,document.getElementById("c"+id.toString()+"mixte")]
+	       ,document.getElementById("c"+id.toString()+"masculin")
+	       ,document.getElementById("c"+id.toString()+"mixte")]
     let lesidlabel=[document.getElementById("lc"+id.toString()+"feminin")
-               ,document.getElementById("lc"+id.toString()+"masculin")
-               ,document.getElementById("lc"+id.toString()+"mixte")]
+	       ,document.getElementById("lc"+id.toString()+"masculin")
+	       ,document.getElementById("lc"+id.toString()+"mixte")]
     if (test_masculin() && test_feminin()) {
-        alert('impossible de choisir masculin et féminin en même temps')
-        lesid[type].checked=false
-    } 
+	alert('impossible de choisir masculin et féminin en même temps')
+	lesid[type].checked=false
+    }
     leschecked()
  }
 
-function nbCreneauChecked() { 
+function nbCreneauChecked() {
     tabinput=document.getElementById('creneauxdispos').getElementsByTagName("input")
     val=0
     for (i=0;i<tabinput.length;i++) {
-        if (tabinput[i].checked) { val+=1}
+	if (tabinput[i].checked) { val+=1}
     }
     return val
 }
 
-function validation_formulaire() { 
+function validation_formulaire() {
     if (nom.value=="" || prenom.value=="" || telephone.value=="" || mail.value=="") {
-        alert('Le formulaire est incomplet')
-        return
+	alert('Le formulaire est incomplet')
+	return
     }
     if (!consignesecurite.checked) {
-        alert('Il faut penser à valider les consignes de sécurité !')
-        return
+	alert('Il faut penser à valider les consignes de sécurité !')
+	return
     }
     if (!consignergpd.checked) {
-        alert('Il faut autoriser Sand System à sauvegarder les données !')
-        return
+	alert('Il faut autoriser Sand System à sauvegarder les données !')
+	return
     }
     val=nbCreneauChecked()
     if (val == 0) {
-        alert('Il faut choisir au moins un créneau')
-        return
+	alert('Il faut choisir au moins un créneau')
+	return
     }
     bouton_adherent=false
     for (i=0;i<adherent.length;i++) {
-        bouton_adherent=bouton_adherent || adherent[i].checked
+	bouton_adherent=bouton_adherent || adherent[i].checked
     }
     if (!bouton_adherent) {
-        alert('Il faut indiquer si tu es adhérent SandSystem')
-        return
+	alert('Il faut indiquer si tu es adhérent SandSystem')
+	return
     }
     bouton_niveau=false
     for (i=0;i<niveau.length;i++) {
-         bouton_niveau=bouton_niveau || niveau[i].checked
+	 bouton_niveau=bouton_niveau || niveau[i].checked
     }
     if (!bouton_niveau) {
-        alert('Il faut indiquer quel est ton niveau')
-        return
+	alert('Il faut indiquer quel est ton niveau')
+	return
     }
     LeFormulaire.submit()
 }

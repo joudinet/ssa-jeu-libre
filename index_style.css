@@ -10,10 +10,14 @@ h1 {
 	text-align: center;
 }
 
-.general_index {
+form {
     display : grid;
-    grid-template-columns : 45% 55%;
-    margin : 10px;
+    grid-template-columns : 1fr 1fr;
+}
+
+footer {
+    grid-column-start: 1;
+    grid-column-end: 3;
 }
 
 .formulaire_index {
@@ -27,20 +31,13 @@ h1 {
 }
 
 .creneaux_index {
+    grid-column-start: 2;
+    grid-row-start: 1;
+    grid-row-end: 5;
     display : grid;
     grid-template-columns : 40% 60%;
     margin : 10px;
-    align-self: center;
-}
-
-.creneaux_index div:nth-child(odd) {
-    text-align : right;
-    margin : 10px;
-}
-
-.creneaux_index div:nth-child(even) {
-    text-align : left;
-    margin : 10px;
+    align-self: stretch;
 }
 
 .validation_index {
@@ -58,7 +55,7 @@ textarea{
   height: 100px;
 }
 
-/** 
+/**
 *** déco des labels, checkbox/radio invisibles
 ***/
 
@@ -66,7 +63,7 @@ input[type="checkbox"]:not(.texteconsigne):not(.textergpd),input[type="radio"] {
     display : none;
 }
 
-label[for]:not(.texteconsigne):not(.textergpd){  /* les labels des checkbox/radios */
+label.round {  /* les labels des checkbox/radios */
      display : inline-block;
      border : 1px solid black;
      padding : 5px;
@@ -78,7 +75,7 @@ label[for]:not(.texteconsigne):not(.textergpd){  /* les labels des checkbox/radi
      text-align : center;
      color : white;
  }
- 
+
 label[for], input[type="checkbox"] {
      cursor : pointer;
  }
@@ -105,12 +102,28 @@ button {   /* bouton validation formulaire */
 ***/
 
 @media screen and (max-device-width : 902px), (max-width : 902px){
-    
-.general_index {
+
+form {
      grid-template-columns : 100%;
 }
+footer {
+    grid-column-start: auto;
+    grid-column-end: auto;
+}
+
 .creneaux_index {
+    grid-column-start: auto;
+    grid-row-start: auto;
      grid-template-columns : 100%;
+}
+
+.perso label {
+    display: block;
+}
+
+.perso input {
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .consignesecurite {
@@ -122,21 +135,8 @@ textarea {
     font-size : 1.2em;
 }
 
-.creneaux_index div:nth-child(odd) {
-    text-align : left;
-    margin : 3px;
-    margin-top : 20px;
-}
 .creneaux_index div:nth-child(even) {
-    margin : 2px;    
-}
-
-.creneaux_index div:nth-child(1) {
-    text-align : center;
-}
-
-.creneaux_index div:nth-child(2) {
-    text-align : center;
+    margin-top: 1ex;
 }
 
 .validation_index {
@@ -152,25 +152,6 @@ textarea {
 .centree {
     display : inline-block;
     text-align : center;
-}
-
-
-label[for]:not(.texteconsigne){
-    min-width : 20%;
-    margin : 10px;
-}
-}
-
-.grand {
-    min-width : 40%;
-}
-
-@media screen and (max-device-width : 320px) {
-   
-label[for]:not(.texteconsigne){
-    min-width : 25%;
-    padding : 2px;
-    margin : 3px;
 }
 
 }
