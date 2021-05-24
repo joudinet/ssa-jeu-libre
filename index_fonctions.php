@@ -17,16 +17,15 @@ function envoie_mail_inscription($nom,$target,$creneau_demandes) {
     $sent = true;
 
     $mail = new PHPmailer();
-    $mail->CharSet = 'UTF-8';
+    $mail->CharSet = PHPMailer::CHARSET_UTF8;
     $mail->setFrom($mail_from, $mail_fromName);
     $mail->AddAddress($target);
-    $mail->ContentType = 'text/plain';
-    $mail->Subject="Confirmation d'inscription";
-    $msg="Bonjour ".$nom."!\n\n"."Ton inscription à bien été prise en compte.\n"."Tu recevras un mail dès que les créneaux seront finalisés.\n\n"."Voici la liste des créneaux demandés :\n";
+    $mail->Subject="Demande d'inscription";
+    $msg="Bonjour ".$nom.",\n\n"."Votre demande d'inscription a bien été prise en compte.\n"."Vous recevrez un e-mail dès que les créneaux seront finalisés.\n\n"."Voici la liste des créneaux demandés :\n";
     foreach ($creneau_demandes as $uncreneau) {
         $msg.=jolie_date($uncreneau[0]).", ".$uncreneau[1]." en ".$uncreneau[2]."\n";
     }
-    $msg.="\n"."L'équipe SSA";
+    $msg.="\n-- \nL'équipe SSA";
     $mail->Body=$msg;
     if(!$mail->send()) {
         echo 'Mailer Error: ' . $mail->ErrorInfo;

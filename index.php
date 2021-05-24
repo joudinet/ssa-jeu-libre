@@ -3,18 +3,18 @@
 <HTML>
     <META http-equiv=content-type content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+
     <HEAD>
         <TITLE>Gestion des créneaux</TITLE>
         <LINK rel="stylesheet" href="index_style.css?=<?php echo time(); //pour forcer le css a ne pas être en cache et jouer des tours en dev ?>">
     </HEAD>
-    
-<?php 
+
+<?php
 require "index_fonctions.php";
 ouvre_bdd();
 if (isset($_POST['nom'])) {
     if (valide_formulaire()) {
-     echo "<H1 >Ton inscription est validée.<BR><a href='index.php'>Lien de retour à l'accueil</a></H1>";  
+     echo "<p>Votre demande d'inscription a bien été prise en compte et un e-mail vous as été envoyé.<br/><a href='index.php'>Lien de retour à l'accueil</a></p>";
      die();
     }
 }
@@ -23,10 +23,8 @@ ferme_bdd();
 ?>
 
 <BODY>
-    <H1 class="titre_index">
-        Inscription aux créneaux jeu-libre Sand-System
-    </H1>
-        
+    <H1 class="titre_index">Inscription aux créneaux de jeu libre à Sand System</H1>
+
     <DIV class="general_index">
         <DIV class="formulaire_index">
             <FORM id="le_formulaire_index" method="post" action="index.php">
@@ -66,16 +64,16 @@ ferme_bdd();
                 <DIV class="item_formulaire_index">
                     <textarea name="commentaire" placeholder="Indique ici si tu souhaites jouer avec quelqu'un en particulier"></textarea>
                 </DIV>
-            </FORM>    
+            </FORM>
         </DIV>
-        
+
         <DIV class="creneaux_index" id="creneauxdispos">
             <DIV> Liste des créneaux disponibles :</DIV><DIV> (créneaux sélectionnés en orange)</DIV>
-<?php 
+<?php
 $nb=0;
-foreach ($les_creneaux as $un_creneau) { 
+foreach ($les_creneaux as $un_creneau) {
         $id=$un_creneau['id'];
-        echo '<DIV>'.secu_ecran(jolie_date($un_creneau['date'])).' '.secu_ecran($un_creneau['heure']).' : </DIV>'; 
+        echo '<DIV>'.secu_ecran(jolie_date($un_creneau['date'])).' '.secu_ecran($un_creneau['heure']).' : </DIV>';
         echo '<DIV>';
         if ($un_creneau['feminin']>0) { $nb=1;echo '<INPUT class="checkboxfeminin" form="le_formulaire_index" type="checkbox" id="c'.$id.'feminin" name="c'.$id.'feminin" onclick="click_creneau('.$id.',0)" value=0>';
         echo '<LABEL for="c'.$id.'feminin" id="lc'.$id.'feminin"> féminin</LABEL>';}
@@ -84,20 +82,20 @@ foreach ($les_creneaux as $un_creneau) {
         if ($un_creneau['mixte']>0) {$nb=1;echo '<INPUT class="checkboxmixte" form="le_formulaire_index" type="checkbox" id="c'.$id.'mixte" name="c'.$id.'mixte" onclick="click_creneau('.$id.',2)" value=0>';
         echo '<LABEL for="c'.$id.'mixte" id="lc'.$id.'mixte"> mixte</LABEL>';}
         echo '</DIV>';
-        
+
 }
 if ($nb==0) {
     echo "Pas de créneaux prévus pour l'instant";
 }
-    
+
 ?>
 
         </DIV>
-        
+
     </DIV>
 
     <DIV class="validation_index">
-        <DIV><INPUT form="le_formulaire_index" type="checkbox" id="consignesecurite" name="consignesecurite" class="texteconsigne"> 
+        <DIV><INPUT form="le_formulaire_index" type="checkbox" id="consignesecurite" name="consignesecurite" class="texteconsigne">
         <LABEL for="consignesecurite" class="texteconsigne"> Je confirme avoir pris connaissance du protocole de jeu pour une reprise responsable. J'en accepte les termes et les conditions. Je m'engage à le respecter.</LABEL></DIV>
         <DIV><INPUT form="le_formulaire_index" type="checkbox" id="consignergpd" name="consignergpd" class="texteconsigne">
             <LABEL for="consignergpd" class="textergpd"> J'autorise Sandsystem à sauvegarder mes informations personnelles pendant une durée de 6 mois maximum. (à tout moment, il suffit d'envoyer un mail à lemail@lemail.com pour les supprimer)</LABEL></DIV><BR>
@@ -105,7 +103,7 @@ if ($nb==0) {
         <DIV class="centree"><BUTTON type="button"  onclick="validation_formulaire()" > Soumettre la demande de créneaux</BUTTON></DIV>
     </DIV>
     <BR><BR><BR><BR>
-    
+
 </BODY>
 <SCRIPT src="index_java.js?=<?php echo time(); //pour forcer le js a ne pas être en cache et jouer des tours en dev ?>">  </SCRIPT>
 </HTML>
