@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 
-<HTML>
-    <META http-equiv=content-type content="text/html; charset=utf-8">
+<html>
+<head>
+    <meta http-equiv=content-type content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <HEAD>
-        <TITLE>Gestion des créneaux</TITLE>
-        <LINK rel="stylesheet" href="index_style.css?=<?php echo time(); //pour forcer le css a ne pas être en cache et jouer des tours en dev ?>">
-    </HEAD>
+    <title>Gestion des créneaux</title>
+    <link rel="stylesheet" href="index_style.css?=<?php echo time(); //pour forcer le css a ne pas être en cache et jouer des tours en dev ?>">
+</head>
 
 <?php
 require "index_fonctions.php";
@@ -21,51 +20,57 @@ if (isset($_POST['nom'])) {
 $les_creneaux=lire_les_creneaux();
 ferme_bdd();
 ?>
+<body>
+    <h1 class="titre_index">Inscription aux créneaux de jeu libre à Sand System</h1>
 
-<BODY>
-    <H1 class="titre_index">Inscription aux créneaux de jeu libre à Sand System</H1>
-
-    <DIV class="general_index">
-        <DIV class="formulaire_index">
-            <FORM id="le_formulaire_index" method="post" action="index.php">
+    <div class="general_index">
+        <form id="le_formulaire_index" class="formulaire_index" method="post" action="index.php">
+            <fieldset>
                 <legend>Informations personnelles :</legend>
-                <DIV class="item_formulaire_index">
-                    <LABEL> Nom : </LABEL>
-                    <INPUT id="nom" name="nom" class="grand">
-                </DIV>
-                <DIV class="item_formulaire_index">
-                    <LABEL> Prénom : </LABEL>
-                    <INPUT id="prenom" name="prenom" class="grand">
-                </DIV>
-                <DIV class="item_formulaire_index">
-                    <LABEL> Mail : </LABEL>
-                    <INPUT type="email" id="mail" name="mail" class="grand">
-                </DIV>
-                <DIV class="item_formulaire_index">
-                    <LABEL> Téléphone : </LABEL>
-                    <INPUT id="telephone" name="telephone" type="tel" class="grand">
-                </DIV>
-                <DIV class="item_formulaire_index">
-                    <LABEL class="radio"> Niveau de jeu estimé : </LABEL>
-                    <INPUT type="radio" name="niveau" value="debutant" id="jeu1"> <LABEL for="jeu1" id="jeul1"> débutant</LABEL>
-                    <INPUT type="radio" name="niveau" value="intermediaire" id="jeu2"> <LABEL for="jeu2" id="jeul2"> intermédiaire</LABEL>
-                    <INPUT type="radio" name="niveau" value="confirme" id="jeu3"> <LABEL for="jeu3" id="jeul3"> confirmé</LABEL>
-                    <INPUT type="radio" name="niveau" value="expert" id="jeu4"> <LABEL for="jeu4" id="jeul4"> expert</LABEL>
-                </DIV>
-                <DIV class="item_formulaire_index">
-                    <LABEL class="radio"> Es-tu adhérent(e) SandSystem ? </LABEL>
-                    <INPUT type="radio" id="ad1" name="adherent" value="oui"> <LABEL for="ad1" id="adl1"> oui</LABEL>
-                    <INPUT type="radio" id="ad2" name="adherent" value="non"> <LABEL for="ad2" id="adl2"> non</LABEL>
-                </DIV>
-                <DIV class="item_formulaire_index" id="adhesion" style="display : none;">
-                    <LABEL> Pour les non-adhérents, la session est à 10 euros</LABEL>
+                <label>Nom :
+                    <input id="nom" name="nom" class="grand">
+                </label>
+                <label>Prénom :
+                    <input id="prenom" name="prenom" class="grand">
+                </label>
+                <label>Mail :
+                    <input type="email" id="mail" name="mail" class="grand">
+                </label>
+                <label>Téléphone :
+                    <input id="telephone" name="telephone" type="tel" class="grand">
+                </label>
+            </fieldset>
+            <fieldset>
+                <legend>Niveau de jeu estimé :</legend>
+                <label id="jeul1">débutant
+                   <input type="radio" name="niveau" value="debutant" id="jeu1">
+                </label>
+                <label id="jeul2">intermédiaire
+                   <input type="radio" name="niveau" value="intermediaire" id="jeu2">
+                </label>
+                <label id="jeul3">confirmé
+                   <input type="radio" name="niveau" value="confirme" id="jeu3">
+                </label>
+                <label id="jeul4">expert
+                   <input type="radio" name="niveau" value="expert" id="jeu4">
+                </label>
+            </fieldset>
+            <fieldset>
+                <legend>Es-tu adhérent(e) SandSystem ?</legend>
+                <label id="adl1">oui
+                   <input type="radio" id="ad1" name="adherent" value="oui">
+                </label>
+                <label id="adl1">non
+                   <input type="radio" id="ad2" name="adherent" value="non">
+                </label>
+                <div id="adhesion" style="display: none">
+                    Pour les non-adhérents, la session est à 10 euros
                     <a href="index.php"> lien pour adhérer</a>
-                </DIV>
-                <DIV class="item_formulaire_index">
-                    <textarea name="commentaire" placeholder="Indique ici si tu souhaites jouer avec quelqu'un en particulier"></textarea>
-                </DIV>
-            </FORM>
-        </DIV>
+                </div>
+            </fieldset>
+                <textarea name="commentaire" placeholder="Indique ici si tu souhaites jouer avec quelqu'un en particulier"></textarea>
+            </form>
+        </div>
 
         <DIV class="creneaux_index" id="creneauxdispos">
             <DIV> Liste des créneaux disponibles :</DIV><DIV> (créneaux sélectionnés en orange)</DIV>
@@ -98,7 +103,7 @@ if ($nb==0) {
         <DIV><INPUT form="le_formulaire_index" type="checkbox" id="consignesecurite" name="consignesecurite" class="texteconsigne">
         <LABEL for="consignesecurite" class="texteconsigne"> Je confirme avoir pris connaissance du protocole de jeu pour une reprise responsable. J'en accepte les termes et les conditions. Je m'engage à le respecter.</LABEL></DIV>
         <DIV><INPUT form="le_formulaire_index" type="checkbox" id="consignergpd" name="consignergpd" class="texteconsigne">
-            <LABEL for="consignergpd" class="textergpd"> J'autorise Sandsystem à sauvegarder mes informations personnelles pendant une durée de 6 mois maximum. (à tout moment, il suffit d'envoyer un mail à lemail@lemail.com pour les supprimer)</LABEL></DIV><BR>
+            <LABEL for="consignergpd" class="textergpd"> J'autorise Sandsystem à sauvegarder mes informations personnelles pendant une durée de 6 mois maximum. (à tout moment, il suffit d'envoyer un mail à info@sandystem.com pour les supprimer)</LABEL></DIV><BR>
         <DIV class="centree"> <A href=" https://drive.google.com/file/d/12l7dqbU4wu52WcvrWphWyRbwFPnm-2qz/view?usp=sharing">lien vers le protocole de reprise</A></DIV><BR><BR>
         <DIV class="centree"><BUTTON type="button"  onclick="validation_formulaire()" > Soumettre la demande de créneaux</BUTTON></DIV>
     </DIV>
