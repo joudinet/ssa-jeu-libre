@@ -11,4 +11,7 @@ $mysql_pass='';
 // Mail data
 $mail_from='info@example.com';
 $mail_fromName='Example';
+
+// Google reCAPTCHA secret key
+$captcha_secretKey='';
 ?>

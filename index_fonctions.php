@@ -48,7 +48,8 @@ function test_nom($nom,$prenom,$stmt) { //$stmt requete "nom,prenom" pour le ter
 }
 
 function valide_formulaire () { // non utilisé : renvoie true/false si c'est réussi/non réussi
-    global $dbh;
+    global $dbh, $captcha_secretKey;
+
     if (isset($_POST['nom']) && isset($_POST['prenom']) && isset($_POST['mail']) && isset($_POST['telephone']) && isset($_POST['commentaire'])) {
         if ($_POST['nom']=="" ||$_POST['prenom']=="" ||$_POST['mail']=="" ||$_POST['telephone']=="") {
             echo "Formulaire incomplet";
@@ -68,6 +69,23 @@ function valide_formulaire () { // non utilisé : renvoie true/false si c'est r�
         }
         if (!isset($_POST['niveau'])) {
             echo "Il faut indiquer un niveau de jeu. ";
+            return false;
+        }
+        $captcha='';
+        if (isset($_POST['g-recaptcha-response'])) {
+            $captcha=$_POST['g-recaptcha-response'];
+        }
+        if (!$captcha) {
+            echo "Il faut cocher le captcha. ";
+            return false;
+        }
+        // verify captcha
+        $ip = $_SERVER['REMOTE_ADDR'];
+        $url = 'https://www.google.com/recaptcha/api/siteverify?secret=' . urlencode($captcha_secretKey) . '&response=' . urlencode($captcha);
+        $response = file_get_contents($url);
+        $responseKeys = json_decode($response, true);
+        if(!$responseKeys["success"]) {
+            echo "Mauvais captcha.";
             return false;
         }
         try {

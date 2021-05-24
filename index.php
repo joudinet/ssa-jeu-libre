@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestion des créneaux</title>
     <link rel="stylesheet" href="index_style.css?=<?php echo time(); //pour forcer le css a ne pas être en cache et jouer des tours en dev ?>">
-    <script defer src="index_java.js?=<?php echo time(); //pour forcer le js a ne pas être en cache et jouer des tours en dev ?>"></script>
+    <script src="index_java.js?=<?php echo time(); //pour forcer le js a ne pas être en cache et jouer des tours en dev ?>" defer></script>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 
 <?php
@@ -109,6 +110,7 @@ foreach ($les_creneaux as $un_creneau) {
         </label>
         <a href=" https://drive.google.com/file/d/12l7dqbU4wu52WcvrWphWyRbwFPnm-2qz/view?usp=sharing">lien vers le protocole de reprise</A>
     </div>
+    <div class="g-recaptcha" data-sitekey="6LeUnesaAAAAAOHldc-uyGOrTv3xDXRvYU-j1IPw"></div>
         <button type="button"  onclick="validation_formulaire()" >Soumettre la demande de créneaux</button>
     </footer>
     </form>
