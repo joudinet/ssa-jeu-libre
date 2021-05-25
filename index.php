@@ -100,7 +100,7 @@ foreach ($les_creneaux as $un_creneau) {
     <div>
         <input type="checkbox" id="consignesecurite" name="consignesecurite" class="texteconsigne">
         <label for="consignesecurite" class="texteconsigne">
-            Je confirme avoir pris connaissance du protocole de jeu pour une reprise responsable. J'en accepte les termes et les conditions. Je m'engage à le respecter.
+            Je confirme avoir pris connaissance du <a href=" https://drive.google.com/file/d/12l7dqbU4wu52WcvrWphWyRbwFPnm-2qz/view?usp=sharing">protocole de jeu</a> pour une reprise responsable. J'en accepte les termes et les conditions. Je m'engage à le respecter.
         </label>
     </div>
     <div>
@@ -108,10 +108,9 @@ foreach ($les_creneaux as $un_creneau) {
          <label for="consignergpd" class="textergpd">
              J'autorise Sandsystem à sauvegarder mes informations personnelles pendant une durée de 6 mois maximum. (à tout moment, il suffit d'envoyer un mail à info@sandystem.com pour les supprimer)
         </label>
-        <a href=" https://drive.google.com/file/d/12l7dqbU4wu52WcvrWphWyRbwFPnm-2qz/view?usp=sharing">lien vers le protocole de reprise</A>
     </div>
     <div class="g-recaptcha" data-sitekey="6LeUnesaAAAAAOHldc-uyGOrTv3xDXRvYU-j1IPw"></div>
-        <button type="button"  onclick="validation_formulaire()" >Soumettre la demande de créneaux</button>
+        <button type="button" onclick="validation_formulaire()" >Soumettre la demande de créneaux</button>
     </footer>
     </form>
 </body>
