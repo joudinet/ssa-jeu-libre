@@ -15,6 +15,14 @@ form {
     grid-template-columns : 1fr 1fr;
 }
 
+fieldset.perso {
+    display: grid;
+}
+
+.perso label {
+    margin-top: 1ex;
+}
+
 footer {
     grid-column-start: 1;
     grid-column-end: 3;
@@ -59,6 +67,10 @@ textarea{
 *** déco des labels, checkbox/radio invisibles
 ***/
 
+input[type="checkbox"] {
+    cursor : pointer;
+}
+
 input[type="checkbox"]:not(.texteconsigne):not(.textergpd),input[type="radio"] {
     display : none;
 }
@@ -74,9 +86,6 @@ label.round {  /* les labels des checkbox/radios */
      background-color : #2687c9;
      text-align : center;
      color : white;
- }
-
-label[for], input[type="checkbox"] {
      cursor : pointer;
  }
 
@@ -117,15 +126,6 @@ footer {
      grid-template-columns : 100%;
 }
 
-.perso label {
-    display: block;
-}
-
-.perso input {
-    width: 100%;
-    box-sizing: border-box;
-}
-
 .consignesecurite {
     width:30px;
     height:30px;
@@ -147,11 +147,6 @@ textarea {
 
 .validation_index>div {
     text-align : left;
-}
-
-.centree {
-    display : inline-block;
-    text-align : center;
 }
 
 }
