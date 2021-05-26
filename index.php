@@ -26,8 +26,9 @@ ferme_bdd();
     <h1 class="titre_index">Inscription aux créneaux de jeu libre à Sand System</h1>
 
     <form id="le_formulaire_index" class="formulaire_index" method="post" action="index.php">
-        <fieldset class="perso">
+        <fieldset>
             <legend>Informations personnelles :</legend>
+        <div class="perso"> <!-- grid layout on fieldset is buggy on Chrome -->
             <label for="nom">Nom</label>
             <input id="nom" name="nom" />
             <label for="prenom">Prénom</label>
@@ -36,6 +37,7 @@ ferme_bdd();
             <input type="email" id="mail" name="mail" />
             <label for="telephone">Téléphone</label>
             <input id="telephone" name="telephone" type="tel" />
+        </div>
         </fieldset>
         <fieldset>
             <legend>Niveau de jeu estimé :</legend>
@@ -66,6 +68,7 @@ ferme_bdd();
         </fieldset>
     <fieldset class="creneaux_index" id="creneauxdispos">
         <legend>Liste des créneaux disponibles : (créneaux sélectionnés en orange)</legend>
+    <div class="creneaux_index">
 <?php
 foreach ($les_creneaux as $un_creneau) {
     $no_creneau = true;
@@ -94,6 +97,7 @@ foreach ($les_creneaux as $un_creneau) {
 }
 
 ?>
+    </div>
     </fieldset>
 
     <footer>
@@ -106,7 +110,7 @@ foreach ($les_creneaux as $un_creneau) {
     <div>
          <input type="checkbox" id="consignergpd" name="consignergpd" class="texteconsigne">
          <label for="consignergpd" class="textergpd">
-             J'autorise Sandsystem à sauvegarder mes informations personnelles pendant une durée de 6 mois maximum. (à tout moment, il suffit d'envoyer un mail à info@sandystem.com pour les supprimer)
+             J'autorise Sandsystem à sauvegarder mes informations personnelles pendant une durée de 6 mois maximum. (à tout moment, il suffit d'envoyer un mail à info@sandsystem.com pour les supprimer)
         </label>
     </div>
     <div class="g-recaptcha" data-sitekey="6LeUnesaAAAAAOHldc-uyGOrTv3xDXRvYU-j1IPw"></div>

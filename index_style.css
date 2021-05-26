@@ -15,7 +15,7 @@ form {
     grid-template-columns : 1fr 1fr;
 }
 
-fieldset.perso {
+.perso {
     display: grid;
 }
 
@@ -38,13 +38,21 @@ footer {
     margin: 10px;
 }
 
-.creneaux_index {
+fieldset.creneaux_index {
     grid-column-start: 2;
     grid-row-start: 1;
     grid-row-end: 5;
+    align-self: stretch;
+}
+
+div.creneaux_index {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    align-self: stretch;
+}
+
+.creneaux_index div:nth-child(odd) {
+    margin-top: 0.5em;
+    margin-bottom: 1em;
 }
 
 .validation_index {
@@ -79,6 +87,7 @@ label.round {  /* les labels des checkbox/radios */
      padding : 5px 10px;
      margin : 5px;
      border-radius : 15px;
+     line-height: calc(22px + 1em);
      background-color : #2687c9;
      text-align : center;
      color : white;
@@ -111,7 +120,7 @@ button {   /* bouton validation formulaire */
 @media screen and (max-device-width : 902px), (max-width : 902px){
 
 form {
-     grid-template-columns : 100%;
+     grid-template-columns : 1fr;
 }
 footer {
     grid-column-start: auto;
@@ -124,6 +133,7 @@ label.round {  /* les labels des checkbox/radios */
      padding : 5px;
      margin : 5px;
      min-width : 15%;
+     line-height: initial;
      border-radius : 15px;
      background-color : #2687c9;
      text-align : center;
@@ -131,11 +141,25 @@ label.round {  /* les labels des checkbox/radios */
      cursor : pointer;
 }
 
-.creneaux_index {
+fieldset.creneaux_index {
     grid-column-start: auto;
     grid-row-start: auto;
-     grid-template-columns : 100%;
 }
+
+div.creneaux_index {
+    grid-template-columns : 1fr;
+}
+
+.creneaux_index div:nth-child(odd) {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.creneaux_index div:nth-child(even) {
+    margin-top: 0.1em;
+    margin-bottom: 0.5em;
+}
+
 
 .consignesecurite {
     width:30px;
@@ -144,10 +168,6 @@ label.round {  /* les labels des checkbox/radios */
 
 textarea {
     font-size : 1.2em;
-}
-
-.creneaux_index div:nth-child(even) {
-    margin-top: 1ex;
 }
 
 .validation_index {
