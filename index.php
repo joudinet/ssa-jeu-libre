@@ -23,6 +23,12 @@ $les_creneaux=lire_les_creneaux();
 ferme_bdd();
 ?>
 <body>
+    <nav class="menu">
+        <ul>
+             <li><a href="#">Demande d'inscription</a></li><!-- ' -->
+             <li><a href="inscrits.php">Occupation des terrains</a></li>
+        </ul>
+    </nav>
     <h1 class="titre_index">Inscription aux créneaux de jeu libre à Sand System</h1>
 
     <form id="le_formulaire_index" class="formulaire_index" method="post" action="index.php">

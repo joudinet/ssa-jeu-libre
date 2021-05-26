@@ -3,6 +3,42 @@ body{
   font-family : inter;
 }
 
+nav.menu {
+    background-color: rgb(38, 135, 201);
+}
+
+.menu ul {
+    display: flex;
+    list-style: none;
+}
+
+.menu li {
+    padding: 5px 10px;
+}
+
+.menu li a {
+    color: white;
+    text-decoration: none;
+}
+
+.menu li a:hover {
+    color: rgb(250, 179, 21);
+}
+
+table {
+    text-align : left;
+    margin-left: auto;
+    margin-right: auto;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+
+th, td {
+    border : 1px solid;
+    padding : 2px;
+}
+
 h1 {
 	color:black;
 	font-family: Spartan;
