@@ -107,8 +107,10 @@ function creationenvoi($les_creneaux_demandes) {
     $mail->Subject='Créneaux de jeu';
     $mail->Body="Bonjour!\n\n"."Voici, en pièce jointe, la répartition sur les créneaux pour la semaine.\n"."Bon jeu!\n\n"."L'équipe SSA";
     $mail->AddAttachment('creneauxPDF.pdf');
+    $mail->AddAddress('adressecorrecte@gmail.com');
+    $mail->AddReplyTo('adressereply@gmail.com');
     foreach ($liste_mail as $target) {
-        $mail->AddAddress($target);
+        $mail->AddBCC($target);
     }
     if (!$mail->send()) {
         echo 'Mailer error: ' . $mail->ErrorInfo;
