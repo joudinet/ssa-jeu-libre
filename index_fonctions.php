@@ -20,7 +20,6 @@ function envoie_mail_inscription($nom,$target,$creneau_demandes) {
     $mail->CharSet = PHPMailer::CHARSET_UTF8;
     $mail->setFrom($mail_from, $mail_fromName);
     $mail->AddAddress($target);
-    $mail->AddCC('capucine@sandsystem.com');
     $mail->Subject="Demande d'inscription au jeu libre en cours";
     $msg= <<<EOD
 Bonjour $nom,
@@ -34,8 +33,8 @@ EOD;
     $msg.= <<<EOD
 Nous reviendrons vers toi prochainement pour te confirmer si tes choix
 ont été validés. Si jamais tu as fait une erreur dans tes choix,
-préviens nous aussi vite que possible en répondant à cet email, en
-mettant Capucine en copie.
+préviens nous aussi vite que possible en répondant à cet email, et en
+mettant Capucine <capucine@sandsystem.com> en copie.
 
 Petite nouveauté : un onglet a été ajouté sur la page d'inscription
 pour que tu saches en temps réél combien de personnes sont inscrites
