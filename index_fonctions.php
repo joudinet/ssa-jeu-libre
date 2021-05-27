@@ -20,12 +20,31 @@ function envoie_mail_inscription($nom,$target,$creneau_demandes) {
     $mail->CharSet = PHPMailer::CHARSET_UTF8;
     $mail->setFrom($mail_from, $mail_fromName);
     $mail->AddAddress($target);
-    $mail->Subject="Demande d'inscription";
-    $msg="Bonjour ".$nom.",\n\n"."Votre demande d'inscription a bien été prise en compte.\n"."Vous recevrez un e-mail dès que les créneaux seront finalisés.\n\n"."Voici la liste des créneaux demandés :\n";
+    $mail->AddCC('capucine@sandsystem.com');
+    $mail->Subject="Demande d'inscription au jeu libre en cours";
+    $msg= <<<EOD
+Bonjour $nom,
+
+Ta demande de participation au jeu libre a bien été prise en compte
+pour les créneaux suivants :
+EOD;
     foreach ($creneau_demandes as $uncreneau) {
         $msg.=jolie_date($uncreneau[0]).", ".$uncreneau[1]." en ".$uncreneau[2]."\n";
     }
-    $msg.="\n-- \nL'équipe SSA";
+    $msg.= <<<EOD
+Nous reviendrons vers toi prochainement pour te confirmer si tes choix
+ont été validés. Si jamais tu as fait une erreur dans tes choix,
+préviens nous aussi vite que possible en répondant à cet email, en
+mettant Capucine en copie.
+
+Petite nouveauté : un onglet a été ajouté sur la page d'inscription
+pour que tu saches en temps réél combien de personnes sont inscrites
+sur le(s) créneau(x) demandé(s) !
+
+À bientôt sur les terrains,
+-- 
+L'équipe SSA
+EOD;
     $mail->Body=$msg;
     if(!$mail->send()) {
         echo 'Mailer Error: ' . $mail->ErrorInfo;
