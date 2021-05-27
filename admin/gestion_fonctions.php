@@ -105,10 +105,16 @@ function creationenvoi($les_creneaux_demandes) {
     $mail->setFrom($mail_from, $mail_fromName);
     $mail->ContentType = 'text/plain';
     $mail->Subject='Créneaux de jeu';
-    $mail->Body="Bonjour!\n\n"."Voici, en pièce jointe, la répartition sur les créneaux pour la semaine.\n"."Bon jeu!\n\n"."L'équipe SSA";
+    $msg="Hello les beacheurs 😎\n\n";
+    $msg.="Vous trouverez en pièce-jointe le planning pour les jours à venir !\n\n";
+    $msg.="En cas d'annulation merci d'envoyer un mail à capucine@sandsystem.com\n\n";
+    $msg.="Pour rappel, toute personne n'ayant pas annulé sa réservation au plus tard la veille du créneau (sauf cas extrême) se verra refuser l'accès au site pour la semaine suivante.\n\n";
+    $msg.="À bientôt sur les terrains 😊\n\n";
+    $msg.="L'équipe SSA ✌🏻";
+    $mail->Body=$msg;
     $mail->AddAttachment('creneauxPDF.pdf');
-    $mail->AddAddress('adressecorrecte@gmail.com');
-    $mail->AddReplyTo('adressereply@gmail.com');
+    $mail->AddAddress("capucine@sandsystem.com");
+    $mail->AddReplyTo("capucine@sandsystem.com");
     foreach ($liste_mail as $target) {
         $mail->AddBCC($target);
     }

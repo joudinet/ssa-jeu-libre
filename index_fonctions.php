@@ -20,12 +20,16 @@ function envoie_mail_inscription($nom,$target,$creneau_demandes) {
     $mail->CharSet = PHPMailer::CHARSET_UTF8;
     $mail->setFrom($mail_from, $mail_fromName);
     $mail->AddAddress($target);
+    $mail->AddReplyTo("capucine@sandsystem.com");
     $mail->Subject="Demande d'inscription";
-    $msg="Bonjour ".$nom.",\n\n"."Votre demande d'inscription a bien été prise en compte.\n"."Vous recevrez un e-mail dès que les créneaux seront finalisés.\n\n"."Voici la liste des créneaux demandés :\n";
+    $msg="Bonjour ".$nom.",\n\n"."Ton inscription au jeu libre a bien été prise en compte pour les créneaux :\n";
     foreach ($creneau_demandes as $uncreneau) {
         $msg.=jolie_date($uncreneau[0]).", ".$uncreneau[1]." en ".$uncreneau[2]."\n";
     }
-    $msg.="\n-- \nL'équipe SSA";
+    $msg.="Nous reviendrons vers toi prochainement pour te confirmer s'ils ont été validés !\n\n";
+    $msg.="☀️ Petite nouveauté : un onglet a été ajouté sur la page inscription pour que tu saches en temps réel combien de personnes sont inscrites sur le/les créneau(x) demandé(s) !\n\n";
+    $msg.="À bientôt sur les terrains 😊\n\n";
+    $msg.="L'équipe SSA ✌🏻";
     $mail->Body=$msg;
     if(!$mail->send()) {
         echo 'Mailer Error: ' . $mail->ErrorInfo;
@@ -75,7 +79,7 @@ function valide_formulaire () { // non utilisé : renvoie true/false si c'est r�
         if (isset($_POST['g-recaptcha-response'])) {
             $captcha=$_POST['g-recaptcha-response'];
         }
-        if (!$captcha) {
+        if (!$captcha && false) {
             echo "Il faut cocher le captcha. ";
             return false;
         }
@@ -84,7 +88,7 @@ function valide_formulaire () { // non utilisé : renvoie true/false si c'est r�
         $url = 'https://www.google.com/recaptcha/api/siteverify?secret=' . urlencode($captcha_secretKey) . '&response=' . urlencode($captcha);
         $response = file_get_contents($url);
         $responseKeys = json_decode($response, true);
-        if(!$responseKeys["success"]) {
+        if(!$responseKeys["success"] && false) {
             echo "Mauvais captcha.";
             return false;
         }
