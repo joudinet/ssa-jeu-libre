@@ -28,13 +28,13 @@ ferme_bdd();
                         <OPTION value="mixte"> mixte</OPTION>
                         <OPTION value="masculin"> masculin</OPTION>
                     </SELECT>
-                    <SELECT id="C1" name="C1">
+<!--                    <SELECT id="C1" name="C1">
                         <OPTION value="#CBCBCB" selected> fond gris</OPTION>
                         <OPTION value="#FF0099"> fond rose</OPTION>
                         <OPTION value="#00CCFF"> fond bleu</OPTION>
                         <OPTION value="#33FF00"> fond vert</OPTION>
                     </SELECT>
-                </DIV>
+-->                </DIV>
                 <DIV class="item_formulaire_index">
                     <LABEL> Terrain 2 : </LABEL>
                     <SELECT id="T2" name="T2">
@@ -43,13 +43,13 @@ ferme_bdd();
                         <OPTION value="mixte"> mixte</OPTION>
                         <OPTION value="masculin"> masculin</OPTION>
                     </SELECT>
-                    <SELECT id="C2" name="C2">
+<!--                    <SELECT id="C2" name="C2">
                         <OPTION value="#CBCBCB"> fond gris</OPTION>
                         <OPTION value="#FF0099"> fond rose</OPTION>
                         <OPTION value="#00CCFF" selected> fond bleu</OPTION>
                         <OPTION value="#33FF00"> fond vert</OPTION>
                     </SELECT>
-                </DIV>
+-->                </DIV>
                 <DIV class="item_formulaire_index">
                     <LABEL> Terrain 3 : </LABEL>
                     <SELECT id="T3" name="T3">
@@ -58,13 +58,13 @@ ferme_bdd();
                         <OPTION value="mixte" selected> mixte</OPTION>
                         <OPTION value="masculin"> masculin</OPTION>
                     </SELECT>
-                    <SELECT id="C3" name="C3">
+<!--                    <SELECT id="C3" name="C3">
                         <OPTION value="#CBCBCB"> fond gris</OPTION>
                         <OPTION value="#FF0099" selected> fond rose</OPTION>
                         <OPTION value="#00CCFF"> fond bleu</OPTION>
                         <OPTION value="#33FF00"> fond vert</OPTION>
                     </SELECT>
-                </DIV>
+-->                </DIV>
                 <DIV class="item_formulaire_index">
                     <LABEL> Terrain 4 : </LABEL>
                     <SELECT id="T4" name="T4">
@@ -73,13 +73,13 @@ ferme_bdd();
                         <OPTION value="mixte"> mixte</OPTION>
                         <OPTION value="masculin" selected> masculin</OPTION>
                     </SELECT>
-                    <SELECT id="C4" name="C4">
+<!--                    <SELECT id="C4" name="C4">
                         <OPTION value="#CBCBCB"> fond gris</OPTION>
                         <OPTION value="#FF0099"> fond rose</OPTION>
                         <OPTION value="#00CCFF"> fond bleu</OPTION>
                         <OPTION value="#33FF00" selected> fond vert</OPTION>
                     </SELECT>
-                </DIV>
+-->                </DIV>
             
         </FORM> 
         <BUTTON onclick="valideFormulaire()"> Créer un créneau avec ces informations.</BUTTON>

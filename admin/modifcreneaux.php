@@ -28,66 +28,66 @@ if (count($les_creneaux)==0) {
                 <DIV class="item_formulaire_index">
                     <LABEL> T1 : </LABEL>
                     <SELECT id="T1" name="T1">
-                        <OPTION value="reserve" selected> réservé</OPTION>
-                        <OPTION value="feminin"> féminin</OPTION>
-                        <OPTION value="mixte"> mixte</OPTION>
-                        <OPTION value="masculin"> masculin</OPTION>
+                        <OPTION value="reserve" <?php if ($un_creneau['T1']=="reserve") { echo "selected"; }?>> réservé</OPTION>
+                        <OPTION value="feminin" <?php if ($un_creneau['T1']=="feminin") { echo "selected"; }?>> féminin</OPTION>
+                        <OPTION value="mixte" <?php if ($un_creneau['T1']=="mixte") { echo "selected"; }?>> mixte</OPTION>
+                        <OPTION value="masculin" <?php if ($un_creneau['T1']=="masculin") { echo "selected"; }?>> masculin</OPTION>
                     </SELECT>
-                    <SELECT id="C1" name="C1">
+<!--                    <SELECT id="C1" name="C1">
                         <OPTION value="#CBCBCB" selected> fond gris</OPTION>
                         <OPTION value="#FF0099"> fond rose</OPTION>
                         <OPTION value="#00CCFF"> fond bleu</OPTION>
                         <OPTION value="#33FF00"> fond vert</OPTION>
                     </SELECT>
-                </DIV>
+-->                </DIV>
                 <DIV class="item_formulaire_index">
                     <LABEL> T2 : </LABEL>
                     <SELECT id="T2" name="T2">
-                        <OPTION value="reserve"> réservé</OPTION>
-                        <OPTION value="feminin" selected> féminin</OPTION>
-                        <OPTION value="mixte"> mixte</OPTION>
-                        <OPTION value="masculin"> masculin</OPTION>
+                        <OPTION value="reserve" <?php if ($un_creneau['T2']=="reserve") { echo "selected"; }?>> réservé</OPTION>
+                        <OPTION value="feminin" <?php if ($un_creneau['T2']=="feminin") { echo "selected"; }?>> féminin</OPTION>
+                        <OPTION value="mixte" <?php if ($un_creneau['T2']=="mixte") { echo "selected"; }?>> mixte</OPTION>
+                        <OPTION value="masculin" <?php if ($un_creneau['T2']=="masculin") { echo "selected"; }?>> masculin</OPTION>
                     </SELECT>
-                    <SELECT id="C2" name="C2">
+<!--                    <SELECT id="C2" name="C2">
                         <OPTION value="#CBCBCB"> fond gris</OPTION>
                         <OPTION value="#FF0099"> fond rose</OPTION>
                         <OPTION value="#00CCFF" selected> fond bleu</OPTION>
                         <OPTION value="#33FF00"> fond vert</OPTION>
                     </SELECT>
-                </DIV>
+-->                </DIV>
                 <DIV class="item_formulaire_index">
                     <LABEL> T3 : </LABEL>
                     <SELECT id="T3" name="T3">
-                        <OPTION value="reserve"> réservé</OPTION>
-                        <OPTION value="feminin"> féminin</OPTION>
-                        <OPTION value="mixte" selected> mixte</OPTION>
-                        <OPTION value="masculin"> masculin</OPTION>
+                        <OPTION value="reserve" <?php if ($un_creneau['T3']=="reserve") { echo "selected"; }?>> réservé</OPTION>
+                        <OPTION value="feminin" <?php if ($un_creneau['T3']=="feminin") { echo "selected"; }?>> féminin</OPTION>
+                        <OPTION value="mixte" <?php if ($un_creneau['T3']=="mixte") { echo "selected"; }?>> mixte</OPTION>
+                        <OPTION value="masculin" <?php if ($un_creneau['T3']=="masculin") { echo "selected"; }?>> masculin</OPTION>
                     </SELECT>
-                    <SELECT id="C3" name="C3">
+<!--                    <SELECT id="C3" name="C3">
                         <OPTION value="#CBCBCB"> fond gris</OPTION>
                         <OPTION value="#FF0099" selected> fond rose</OPTION>
                         <OPTION value="#00CCFF"> fond bleu</OPTION>
                         <OPTION value="#33FF00"> fond vert</OPTION>
                     </SELECT>
-                </DIV>
+-->                </DIV>
                 <DIV class="item_formulaire_index">
                     <LABEL> T4 : </LABEL>
                     <SELECT id="T4" name="T4">
-                        <OPTION value="reserve"> réservé</OPTION>
-                        <OPTION value="feminin"> féminin</OPTION>
-                        <OPTION value="mixte"> mixte</OPTION>
-                        <OPTION value="masculin" selected> masculin</OPTION>
+                        <OPTION value="reserve" <?php if ($un_creneau['T4']=="reserve") { echo "selected"; }?>> réservé</OPTION>
+                        <OPTION value="feminin" <?php if ($un_creneau['T4']=="feminin") { echo "selected"; }?>> féminin</OPTION>
+                        <OPTION value="mixte" <?php if ($un_creneau['T4']=="mixte") { echo "selected"; }?>> mixte</OPTION>
+                        <OPTION value="masculin" <?php if ($un_creneau['T4']=="masculin") { echo "selected"; }?>> masculin</OPTION>
                     </SELECT>
-                    <SELECT id="C4" name="C4">
+<!--                    <SELECT id="C4" name="C4">
                         <OPTION value="#CBCBCB"> fond gris</OPTION>
                         <OPTION value="#FF0099"> fond rose</OPTION>
                         <OPTION value="#00CCFF"> fond bleu</OPTION>
                         <OPTION value="#33FF00" selected> fond vert</OPTION>
                     </SELECT>
-                </DIV>
+-->                </DIV>
 <?php
         echo '<DIV><BUTTON type="button" onclick="supprimeCreneau('.$id.')">Supprimer ce créneau</BUTTON></DIV><DIV></DIV>';
-        echo '<INPUT type="submit" value="Modifier ce créneau (sans réinitialiser, ni gérer les changements de nombre de places dispos)"></FORM>';
+        echo '<INPUT type="submit" value="Modifier et reinitialiser ce créneau"></FORM>';
         echo '<BR><BR><BR>';
     }
 }

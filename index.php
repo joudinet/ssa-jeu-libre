@@ -119,7 +119,7 @@ foreach ($les_creneaux as $un_creneau) {
              J'autorise Sandsystem à sauvegarder mes informations personnelles pendant une durée de 6 mois maximum. (à tout moment, il suffit d'envoyer un mail à info@sandsystem.com pour les supprimer)
         </label>
     </div>
-    <div class="g-recaptcha" data-sitekey="6LeUnesaAAAAAOHldc-uyGOrTv3xDXRvYU-j1IPw"></div>
+    <div class="g-recaptcha" data-sitekey="<?echo $captcha_publicKey; ?>"></div>
         <button type="button" onclick="validation_formulaire()" >Soumettre la demande de créneaux</button>
     </footer>
     </form>
