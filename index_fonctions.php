@@ -36,8 +36,8 @@ EOD;
     $msg.= <<<EOD
 Nous reviendrons vers toi prochainement pour te confirmer si tes choix
 ont été validés. Si jamais tu as fait une erreur dans tes choix,
-préviens nous aussi vite que possible en répondant à cet email, en
-mettant Capucine en copie.
+préviens nous aussi vite que possible en répondant à cet email, 
+ou en envoyna tun mail à capucine@sandsystem.com
 
 ☀️ Petite nouveauté : un onglet a été ajouté sur la page d'inscription
 pour que tu saches en temps réél combien de personnes sont inscrites
