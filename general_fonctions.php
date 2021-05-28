@@ -8,13 +8,22 @@ date_default_timezone_set('Europe/Paris');
 
 $terrainpossible=['reserve','feminin','mixte','masculin']; // champs autorisés pour les terrains
 $couleurpossible=["#CBCBCB","#FF0099","#00CCFF","#33FF00"]; // reservé, féminin, mixte, masculin
+$les_couleurs=["feminin"=>"#00CCFF","masculin"=>"#33FF00","mixte"=>"#FF0099","reserve"=>"#CBCBCB"];
 
-function lire_les_creneaux() { // renvoie les créneaux classés par ordre chronologique, en vérifiant les données
+
+function lire_les_creneaux($vieux=false) { // renvoie les créneaux classés par ordre chronologique, en vérifiant les données
     global $dbh,$terrainpossible,$couleurpossible;
     try {
-        $res=$dbh->query('SELECT * FROM CRENEAUX ORDER BY date');
+        $date=date('Y-m-d');
+        if ($vieux) {
+            $stmt=$dbh->prepare('SELECT * FROM CRENEAUX WHERE date<? ORDER BY date');
+        } else {
+            $stmt=$dbh->prepare('SELECT * FROM CRENEAUX WHERE date>=? ORDER BY date');
+        }
+        $stmt->bindParam(1,$date);
+        $stmt->execute();
         $tab_res=[];
-        while ($row=$res->fetch()) {
+        while ($row=$stmt->fetch()) {
             if (!in_array($row['C1'],$couleurpossible) || !in_array($row['C2'],$couleurpossible) || !in_array($row['C3'],$couleurpossible) || !in_array($row['C4'],$couleurpossible)) {
                 throw new Exception('erreur');   }
             if (!in_array($row['T1'],$terrainpossible) || !in_array($row['T2'],$terrainpossible) || !in_array($row['T3'],$terrainpossible) || !in_array($row['T4'],$terrainpossible)) {

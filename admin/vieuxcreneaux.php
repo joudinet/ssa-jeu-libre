@@ -1,8 +1,7 @@
-
 <?php require "header.php"; 
 $ancre=0;
 ouvre_bdd();
-$les_creneaux=lire_les_creneaux();
+$les_creneaux=lire_les_creneaux(true); 
 if (isset($_POST['creneau'])) {
     $les_creneaux_demandes=recupere_liste_creneaux_demandes();
     if (isset($_POST['but'])) { // test inutile car défini si creneau l'est?
@@ -24,8 +23,6 @@ if (isset($_POST['creneau'])) {
             change_adherent($id);
         } elseif ($_POST['but']=="ajoutepersonne") {
             ajoute_personne($id);
-        } elseif ($_POST['but']=="annuleterrain") {
-            annuleterrain($id);
         }
     }
     $stmt = $dbh->prepare("SELECT * FROM RESULTAT WHERE idcreneau=? AND terrain=? AND etat=?");
@@ -49,14 +46,7 @@ if (isset($_POST['creneau'])) {
         foreach(['1','2','3','4'] as $numero_terrain) {
             $terrain='T'.$numero_terrain;?>
             <TABLE>
-                <TR><TH onclick="this.children[0].style.display='block'" style="background-color:<?php echo $le_creneau['C'.$numero_terrain];?>;">
-<DIV  class="formulairecache">
-    <DIV>        
-                 <BUTTON type="button" onclick="event.stopPropagation();annuleTerrain(<?php echo $idcreneau.",'".$terrain."'";?>)">Annuler ce terrain (avec envoi de mail)</BUTTON>
-                 <BUTTON type="button" onclick="event.stopPropagation();this.parentNode.parentNode.style.display='none'"> Fermer cette fenêtre</BUTTON>
-    </DIV>  
-</DIV>                    <?php echo $terrain.' : '.$le_creneau[$terrain]; ?>
-                </TH></TR>
+                <TR><TH style="background-color:<?php echo $le_creneau['C'.$numero_terrain];?>;"><?php echo $terrain.' : '.$le_creneau[$terrain]; ?></TH></TR>
 <?php if (in_array($le_creneau[$terrain],['feminin','mixte','masculin'])) { ?>
 <TR><TD><BUTTON type="button" onclick="nouveau(<?php echo $idcreneau.',\''.$terrain.'\''?>)" >Ajouter une personne </BUTTON></TD></TR>
 <?php } else { ?>
@@ -77,7 +67,6 @@ if (isset($_POST['creneau'])) {
                  <BUTTON type="button" onclick="event.stopPropagation();changeEtat(<?php echo secu_ecran_int($row['id'])?> ,'attente')">Mettre cette personne en attente</BUTTON>
                  <button type="button"  onclick="event.stopPropagation();changeAdherent(<?php echo secu_ecran_int($row['id']);?>)">Changer le statut adhérent</button>
                  <BUTTON type="button" onclick="event.stopPropagation();this.parentNode.parentNode.style.display='none'"> Fermer cette fenêtre</BUTTON>
-                 <BUTTON type="button" onclick="event.stopPropagation();changeEtat(<?php echo secu_ecran_int($row['id'])?> ,'sup')">Suppression définitive</BUTTON>
     </DIV>  
 </DIV>                        <?php echo secu_ecran($row['prenom']).' '.secu_ecran($row['nom']); ?>
                     <button type="button" class="petitboutonmodif bgred" onclick="event.stopPropagation();changeEtat(<?php echo secu_ecran_int($row['id']); ?>,'supprime')"> X </button>
@@ -109,7 +98,6 @@ if (isset($_POST['creneau'])) {
                     } ?>
                  <button type="button" onclick="event.stopPropagation();changeAdherent(<?php echo secu_ecran_int($row['id']);?>)">Changer le statut adhérent</button>
                  <BUTTON type="button" onclick="event.stopPropagation();this.parentNode.parentNode.style.display='none'"> Fermer cette fenêtre</BUTTON>
-                 <BUTTON type="button" onclick="event.stopPropagation();changeEtat(<?php echo secu_ecran_int($row['id'])?> ,'sup')">Suppression définitive</BUTTON>
     </DIV>  
 </DIV>                        <?php echo secu_ecran($row['prenom']).' '.secu_ecran($row['nom']); ?>
                     <button type="button" class="petitboutonmodif bggreen" onclick="event.stopPropagation();changeEtat(<?php echo secu_ecran_int($row['id']); ?>,'valide')"> V </button>
@@ -135,7 +123,6 @@ if (isset($_POST['creneau'])) {
 <DIV  class="formulairecache">
     <DIV>        <button type="button" class="bggreen" onclick="event.stopPropagation();changeEtat(<?php echo secu_ecran_int($row['id']); ?>,'valide')"> Remettre <?php echo secu_ecran($row['prenom']).' '.secu_ecran($row['nom']); ?> sur le créneau </button>
                  <BUTTON type="button" onclick="event.stopPropagation();this.parentNode.parentNode.style.display='none'"> Fermer cette fenêtre</BUTTON>
-                 <BUTTON type="button" onclick="event.stopPropagation();changeEtat(<?php echo secu_ecran_int($row['id'])?> ,'sup')">Suppression définitive</BUTTON>
     </DIV>  
 </DIV>                        <?php echo secu_ecran($row['prenom']).' '.secu_ecran($row['nom']); ?>
                     </TD></TR>
@@ -189,7 +176,7 @@ ferme_bdd();
 ?>    
     <DIV id="ancre0"></DIV>
     <BR><BR> 
-    <FORM id="Formulaire" method="post" action="validationdemandes.php">
+    <FORM id="Formulaire" method="post" action="vieuxcreneaux.php">
 <?php
     foreach ($les_creneaux as $un_creneau) {
         $id=$un_creneau['id'];

@@ -19,7 +19,5 @@ require "gestion_fonctions.php";
     <li><a href="modifcreneaux.php">Modification/suppression de créneaux</a></li>
     <li><a href="validationdemandes.php">Validation des demandes</a></li>
     <li><a href="creationpdf.php">Creation de PDF/envoi de Mail</a></li>
-<?php if (false) { ?>
-<li><a href="recapannulation.php">Récapitulatif des annulations</a></li>
-<?php } ?>
+    <li><a href="vieuxcreneaux.php">Vieux créneaux</a></li>
 </ul>

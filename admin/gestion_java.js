@@ -4,6 +4,14 @@ let inputid=document.getElementById("inputid")
 let texte=document.getElementById("texte")
 let lesinfos=document.getElementById("lesinfos")
 let formulairecache=document.getElementById("formulairecache")
+let touslescreneaux=document.getElementsByName("creneau[]")
+
+function annuleTerrain(id,leterrain) {
+    but.value="annuleterrain"
+    inputid.value=id
+    texte.value=leterrain
+    Formulaire.submit()
+}
 
 function ajoutePersonne() {
     but.value="ajoutepersonne"
@@ -78,5 +86,12 @@ function valideCreneau(id) {
 
 function valideFormulaire() {
     Formulaire.submit()
+}
+
+function valideFormulaireTous() {
+    for (var unebox of touslescreneaux) {
+        unebox.checked=true
+    }
+    Formulaire.submit();
 }
 

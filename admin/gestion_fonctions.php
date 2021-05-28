@@ -12,6 +12,68 @@ require '../PHPMailer/src/SMTP.php';
 require '../PHPMailer/src/Exception.php';
 require('fpdf.php'); // pour le PDF
 
+function annuleterrain($idcreneau) {
+    global $dbh, $mail_from, $mail_fromName;
+    $terrain_nouveau=$_POST['texte'];
+    if (!in_array($terrain_nouveau,['T1','T2','T3','T4'])) {
+        echo "erreur lors de la demande d'annulation' de terrain";
+        return;
+    }
+    try { //echo "demande d'annulation pour le terrain ".$terrain_nouveau." du créneau ".$idcreneau." ";
+        $stmt = $dbh->prepare("SELECT * FROM RESULTAT WHERE idcreneau=? AND terrain=? AND (etat='valide' OR etat='attente')");
+        $stmt->bindParam(1,$idcreneau);
+        $stmt->bindParam(2,$terrain_nouveau);
+        $stmt->execute();
+        $stmt2= $dbh->prepare("UPDATE RESULTAT SET etat=? WHERE id=?");
+        $stmt2->bindParam(1,$etat);
+        $stmt2->bindParam(2,$id);
+        $etat="supprime";
+        $liste_mail=[];
+        while ($row=$stmt->fetch()) {
+            $id=$row['id'];
+            $stmt2->execute();
+            $mail=$row['mail'];
+            if (!(in_array($mail,$liste_mail) || $mail=="")) {
+                array_push($liste_mail,secu_ecran($mail));
+            }
+        }
+        if (!$liste_mail==[]) {
+            $mail = new PHPmailer();
+            $mail->CharSet = 'UTF-8';
+            $mail->setFrom($mail_from, $mail_fromName);
+            $mail->ContentType = 'text/plain';
+            $mail->Subject='Annulation de créneau';
+            $msg= <<<EOD
+Hello les beachers,
+
+Nous sommes désolés mais vous n'êtes pas assez nombreux pour le créneau de 
+EOD;
+            $lecreneau=trouveCreneau($idcreneau);
+            $msg.=jolie_date($lecreneau['date']).' '.$lecreneau['heure'];
+            $msg.=<<<EOD
+
+Nous devons annuler ce créneau mais ce n'est que partie remise!
+À bientôt sur les terrains,
+-- 
+L'équipe SSA
+EOD;
+            $mail->Body=$msg;
+            $mail->AddAddress('capucine@sandsystem.com');
+            foreach ($liste_mail as $target) {
+                $mail->AddBCC($target);
+            }
+            if (!$mail->send()) {
+                echo 'Mailer error: ' . $mail->ErrorInfo;
+            }
+            $mail->SmtpClose();
+            unset($mail); 
+        }
+    } catch (Exception $e) {
+        echo "Erreur dans l'annulation de terrain";
+    }
+    
+}
+
 function creationpdf($les_creneaux_demandes) {
     global $dbh,$les_creneaux;
     $pdf = new PDF_MC_Table();
@@ -106,7 +168,7 @@ function creationenvoi($les_creneaux_demandes) {
     $mail->ContentType = 'text/plain';
     $mail->Subject='Créneaux de jeu libre';
     $mail->Body= <<<EOD
-Hello les beachers,
+Hello les beachers, 😎 
 
 Vous trouverez en pièce-jointe le planning pour les jours à venir.
 
@@ -117,12 +179,13 @@ Pour rappel, toute personne n'ayant pas annulé sa réservation au plus
 tard la veille du créneau (sauf cas extrême) se verra refuser l'accès
 au site pour la semaine suivante.
 
-À bientôt sur les terrains,
+À bientôt sur les terrains, 😊 
 -- 
 L'équipe SSA
 EOD;
     $mail->AddAttachment('creneauxPDF.pdf');
     $mail->AddAddress('capucine@sandsystem.com');
+    $mail->AddReplyTo('capucine@sandsystem.com');
     foreach ($liste_mail as $target) {
         $mail->AddBCC($target);
     }
@@ -374,7 +437,7 @@ function change_adherent($id) {
 function change_etat($id) {
     global $dbh;
     $etat=$_POST['texte'];
-    if (!in_array($etat,['valide','attente','supprime','annule'])) {
+    if (!in_array($etat,['valide','attente','supprime','sup','annule'])) {
         echo "erreur lors de la demande de changement d'état";
         return;
     }
@@ -405,7 +468,13 @@ function change_etat($id) {
         $stmt2->bindParam(2,$personnevalide);
         $stmt2->bindParam(3,$personneattente);
         $stmt2->bindParam(4,$personne['idcreneau']);
-        if ($etat=='supprime') {
+        if ($etat=='sup') {
+            if ($etat_actuel=='valide') {$personnevalide--; $libres++;}
+            else if ($etat_actuel=='attente') {$personneattente--; $libres++;}
+            else if (!$etat_actuel=='supprime') {throw "erreur inattendue";}
+            $stmt->execute();$stmt2->execute();
+            envoie_mail($personne['nom'],$personne['mail'],'suppression',jolie_date($lecreneau['date']).", ".$lecreneau['heure']." en ".$typeterrain);
+        } else if ($etat=='supprime') {
             $libres++;
             if ($etat_actuel=='valide') {$personnevalide--;}
             else if ($etat_actuel=='attente') {$personneattente--;}
@@ -509,7 +578,7 @@ function change_terrain($id) {
 }
 
 function creationCreneau() {
-    global $dbh,$terrainpossible,$couleurpossible;
+    global $dbh,$terrainpossible,$couleurpossible,$les_couleurs;
     try {
         $res=$dbh->query('SELECT MAX(id) FROM CRENEAUX');
         $id=1;
@@ -532,31 +601,32 @@ function creationCreneau() {
         $stmt->bindParam(13, $c3);
         $stmt->bindParam(14, $c4);
         $date=secu_bdd($_POST['date']);
+        if ($date<date('Y-m-d')) { echo "on ne créé pas de créneaux dans le passé ;)"; return ; }
         $heure=secu_bdd($_POST['heure']);
-        if (isset($_POST['T1']) && isset($_POST['C1']) && in_array($_POST['T1'],$terrainpossible) && in_array($_POST['C1'],$couleurpossible)) {
+        if (isset($_POST['T1']) &&  in_array($_POST['T1'],$terrainpossible) ) { // && isset($_POST['C1']) && in_array($_POST['C4'],$couleurpossible)) {
             $t1=secu_bdd($_POST['T1']);
-            $c1=secu_bdd($_POST['C1']);
+            $c1=$les_couleurs[$t1]; //$c1=secu_bdd($_POST['C1']);
         } else {
             $t1="PAS DE JEU LIBRE";
             $c1="#CBCBCB";
         }
-        if (isset($_POST['T2']) && isset($_POST['C2']) && in_array($_POST['T2'],$terrainpossible) && in_array($_POST['C2'],$couleurpossible)) {
+        if (isset($_POST['T2']) &&  in_array($_POST['T2'],$terrainpossible) ) {
             $t2=secu_bdd($_POST['T2']);
-            $c2=secu_bdd($_POST['C2']);
+            $c2=$les_couleurs[$t2]; //$c2=secu_bdd($_POST['C2']);
         } else {
             $t2="PAS DE JEU LIBRE";
             $c2="#CBCBCB";
         }
-        if (isset($_POST['T3']) && isset($_POST['C3']) && in_array($_POST['T3'],$terrainpossible) && in_array($_POST['C3'],$couleurpossible)) {
+        if (isset($_POST['T3']) &&  in_array($_POST['T3'],$terrainpossible) ) {
             $t3=secu_bdd($_POST['T3']);
-            $c3=secu_bdd($_POST['C3']);
+            $c3=$les_couleurs[$t3]; //$c3=secu_bdd($_POST['C3']);
         } else {
             $t3="PAS DE JEU LIBRE";
             $c3="#CBCBCB";
         }
-        if (isset($_POST['T4']) && isset($_POST['C4']) && in_array($_POST['T4'],$terrainpossible) && in_array($_POST['C4'],$couleurpossible)) {
+        if (isset($_POST['T4']) &&  in_array($_POST['T4'],$terrainpossible) ) {
             $t4=secu_bdd($_POST['T4']);
-            $c4=secu_bdd($_POST['C4']);
+            $c4=$les_couleurs[$t4]; //$c4=secu_bdd($_POST['C4']);
         } else {
             $t4="PAS DE JEU LIBRE";
             $c4="#CBCBCB";
@@ -582,9 +652,9 @@ function creationCreneau() {
 }
 
 function ModifieCreneau() {
-    global $dbh, $les_creneaux,$terrainpossible,$couleurpossible;
+    global $dbh, $les_creneaux,$terrainpossible,$couleurpossible,$les_couleurs;
     try {
-        $stmt = $dbh->prepare("UPDATE CRENEAUX SET T1=?,T2=?,T3=?,T4=?,C1=?,C2=?,C3=?,C4=? WHERE id=?");
+        $stmt = $dbh->prepare("UPDATE CRENEAUX SET T1=?,T2=?,T3=?,T4=?,C1=?,C2=?,C3=?,C4=?,feminin=?,masculin=?,mixte=? WHERE id=?");
         $stmt->bindParam(1, $t1);
         $stmt->bindParam(2, $t2);
         $stmt->bindParam(3, $t3);
@@ -593,36 +663,61 @@ function ModifieCreneau() {
         $stmt->bindParam(6, $c2);
         $stmt->bindParam(7, $c3);
         $stmt->bindParam(8, $c4);
-        $stmt->bindParam(9, $id);
+        $stmt->bindParam(9, $feminin);
+        $stmt->bindParam(10, $masculin);
+        $stmt->bindParam(11, $mixte);
+        $stmt->bindParam(12, $id);
         $id=intval($_POST['inputid']);
         if ($id<1) {throw('erreur');}
-       if (isset($_POST['T1']) && isset($_POST['C1']) && in_array($_POST['T1'],$terrainpossible) && in_array($_POST['C1'],$couleurpossible)) {
+        if (isset($_POST['T1']) &&  in_array($_POST['T1'],$terrainpossible) ) { // && isset($_POST['C1']) && in_array($_POST['C4'],$couleurpossible)) {
             $t1=secu_bdd($_POST['T1']);
-            $c1=secu_bdd($_POST['C1']);
+            $c1=$les_couleurs[$t1]; //$c1=secu_bdd($_POST['C1']);
         } else {
             $t1="PAS DE JEU LIBRE";
             $c1="#CBCBCB";
         }
-        if (isset($_POST['T2']) && isset($_POST['C2']) && in_array($_POST['T2'],$terrainpossible) && in_array($_POST['C2'],$couleurpossible)) {
+        if (isset($_POST['T2']) &&  in_array($_POST['T2'],$terrainpossible) ) {
             $t2=secu_bdd($_POST['T2']);
-            $c2=secu_bdd($_POST['C2']);
+            $c2=$les_couleurs[$t2]; //$c2=secu_bdd($_POST['C2']);
         } else {
             $t2="PAS DE JEU LIBRE";
             $c2="#CBCBCB";
         }
-        if (isset($_POST['T3']) && isset($_POST['C3']) && in_array($_POST['T3'],$terrainpossible) && in_array($_POST['C3'],$couleurpossible)) {
+        if (isset($_POST['T3']) &&  in_array($_POST['T3'],$terrainpossible) ) {
             $t3=secu_bdd($_POST['T3']);
-            $c3=secu_bdd($_POST['C3']);
+            $c3=$les_couleurs[$t3]; //$c3=secu_bdd($_POST['C3']);
         } else {
             $t3="PAS DE JEU LIBRE";
             $c3="#CBCBCB";
         }
-        if (isset($_POST['T4']) && isset($_POST['C4']) && in_array($_POST['T4'],$terrainpossible) && in_array($_POST['C4'],$couleurpossible)) {
+        if (isset($_POST['T4']) &&  in_array($_POST['T4'],$terrainpossible) ) {
             $t4=secu_bdd($_POST['T4']);
-            $c4=secu_bdd($_POST['C4']);
+            $c4=$les_couleurs[$t4]; //$c4=secu_bdd($_POST['C4']);
         } else {
             $t4="PAS DE JEU LIBRE";
             $c4="#CBCBCB";
+        }
+        $stmt2 = $dbh->prepare("SELECT * FROM CRENEAUX WHERE id=?");
+        $stmt2->bindParam(1, $id);
+        $stmt2->execute();
+        $row=$stmt2->fetch();
+        $feminin=0;
+        $masculin=0;
+        $mixte=0;
+        foreach ([1,2,3,4] as $t) {
+            $terrain=[$t1,$t2,$t3,$t4][$t-1];
+            if ($terrain=="feminin") {
+                $feminin+=$row['VMAX'.$t]+$row['AMAX'.$t];
+                $feminin-=($row['V'.$t]+$row['A'.$t]);
+            }
+            if ($terrain=="mixte") {
+                $mixte+=$row['VMAX'.$t]+$row['AMAX'.$t];
+                $mixte-=($row['V'.$t]+$row['A'.$t]);
+            }
+            if ($terrain=="masculin") {
+                $masculin+=$row['VMAX'.$t]+$row['AMAX'.$t];
+                $masculin-=($row['V'.$t]+$row['A'.$t]);
+            }
         }
         $stmt->execute();
         $les_creneaux=lire_les_creneaux();
