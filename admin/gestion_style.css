@@ -21,7 +21,7 @@
 }
 
 .formulairecache {
-  display : none;    
+  display : none;
   position: fixed; /* Stay in place */
   z-index: 1; /* Sit on top */
   left: 0;
@@ -72,7 +72,7 @@
   cursor: pointer;
   width : 30px;
   height : 17px;
-  border-radius: 12px;    */ 
+  border-radius: 12px;    */
 }
 
 
@@ -115,7 +115,8 @@
 }
 
 .unjour tr td,.unjour tr th {
-   border: 1px solid black; 
+    border: 1px solid black;
+    white-space: nowrap;
 }
 
 .unjour tr td button {
@@ -154,7 +155,7 @@
 
 #ValidationDemandes{
     margin-bottom : 10px;
-    
+
 }
 
 #menu, #menu ul{
