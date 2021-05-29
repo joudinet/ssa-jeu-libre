@@ -16,9 +16,9 @@ function lire_les_creneaux($vieux=false) { // renvoie les créneaux classés par
     try {
         $date=date('Y-m-d');
         if ($vieux) {
-            $stmt=$dbh->prepare('SELECT * FROM CRENEAUX WHERE date<? ORDER BY date');
+            $stmt=$dbh->prepare('SELECT * FROM CRENEAUX WHERE date<? ORDER BY date,heure');
         } else {
-            $stmt=$dbh->prepare('SELECT * FROM CRENEAUX WHERE date>=? ORDER BY date');
+            $stmt=$dbh->prepare('SELECT * FROM CRENEAUX WHERE date>=? ORDER BY date,heure');
         }
         $stmt->bindParam(1,$date);
         $stmt->execute();
