@@ -54,15 +54,18 @@ EOD; // ' to fix highlighting
 
 // normalize a string
 function normalize_str($str) {
-// Normalizing a string with FROM_D splits the diacritics out from the
-// base characters, then eliminate them with preg_replace.
+    if (!class_exists("Normalizer", $autoload = false))
+        return strtolower($str);
+
+    // Normalizing a string with FROM_D splits the diacritics out from
+    // the base characters, then eliminate them with preg_replace.
     return strtolower(
         preg_replace('/[\x{0300}-\x{036f}]/u', "",
-                     Normalizer::normalize($str, Normalizer::FORM_D));
+                     Normalizer::normalize($str, Normalizer::FORM_D)));
 }
 
-function test_nom($nom,$prenom,$stmt) { //$stmt requete "nom,prenom" pour le terrain à tester
-    // renvoie vraie si les noms et prenoms sont identiques
+// Return true if $nom and $prenom are inside the result of stmt request.
+function test_nom($nom,$prenom,$stmt) {
     while ($row=$stmt->fetch()) {
         if (normalize_str($nom) == normalize_str($row['nom']) and
             normalize_str($prenom) == normalize_str($row['prenom'])) {
