@@ -28,6 +28,8 @@ if (isset($_POST['creneau'])) {
             annuleterrain($id);
         } elseif ($_POST['but']=="valideavecmail") {
             valideavecmail($id);
+        } elseif ($_POST['but']=="indiquecreneaucomplet") {
+            indiquecreneaucomplet($id);
         }
     }
     $stmt = $dbh->prepare("SELECT * FROM RESULTAT WHERE idcreneau=? AND terrain=? AND etat=?");
@@ -109,6 +111,7 @@ if (isset($_POST['creneau'])) {
                         }
                     } ?>
                  <button type="button" onclick="event.stopPropagation();valideAvecMail(<?php echo secu_ecran_int($row['id']);?>)">Valider avec envoi de mail</button>
+                 <button type="button" onclick="event.stopPropagation();indiqueCreneauComplet(<?php echo secu_ecran_int($row['id']);?>)">Indiquer par mail créneau complet</button>
                  <button type="button" onclick="event.stopPropagation();changeAdherent(<?php echo secu_ecran_int($row['id']);?>)">Changer le statut adhérent</button>
                  <span class="close" onclick="event.stopPropagation();this.parentNode.parentNode.style.display='none'">&times;</span>
     </DIV>  
@@ -136,6 +139,7 @@ if (isset($_POST['creneau'])) {
 <DIV  class="formulairecache">
     <DIV>        <button type="button" onclick="event.stopPropagation();changeEtat(<?php echo secu_ecran_int($row['id']); ?>,'valide')"> Remettre <?php echo secu_ecran($row['prenom']).' '.secu_ecran($row['nom']); ?> sur le créneau </button>
                  <button type="button" onclick="event.stopPropagation();valideAvecMail(<?php echo secu_ecran_int($row['id']);?>)">Valider avec envoi de mail</button>
+                 <button type="button" onclick="event.stopPropagation();indiqueCreneauComplet(<?php echo secu_ecran_int($row['id']);?>)">Indiquer par mail créneau complet</button>
                  <BUTTON type="button" class="bgred" onclick="event.stopPropagation();changeEtat(<?php echo secu_ecran_int($row['id'])?> ,'sup')">Suppression définitive</BUTTON>
                  <span class="close" onclick="event.stopPropagation();this.parentNode.parentNode.style.display='none'">&times;</span>
     </DIV>  
