@@ -78,6 +78,12 @@ function supprimeCreneau(id) {
     Formulaire.submit()
 }
 
+function valideAvecMail(id) {
+    but.value="valideavecmail"
+    inputid.value=id
+    Formulaire.submit()
+}
+
 function valideCreneau(id) {
     but.value="validecreneau"
     inputid.value=id

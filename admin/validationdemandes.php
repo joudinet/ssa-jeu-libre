@@ -26,6 +26,8 @@ if (isset($_POST['creneau'])) {
             ajoute_personne($id);
         } elseif ($_POST['but']=="annuleterrain") {
             annuleterrain($id);
+        } elseif ($_POST['but']=="valideavecmail") {
+            valideavecmail($id);
         }
     }
     $stmt = $dbh->prepare("SELECT * FROM RESULTAT WHERE idcreneau=? AND terrain=? AND etat=?");
@@ -60,12 +62,12 @@ if (isset($_POST['creneau'])) {
 <?php if (in_array($le_creneau[$terrain],['feminin','mixte','masculin'])) { ?>
 <TR><TD><BUTTON type="button" onclick="nouveau(<?php echo $idcreneau.',\''.$terrain.'\''?>)" >Ajouter une personne </BUTTON></TD></TR>
 <?php } else { ?>
-<TR><TD>Créneau sans ajout</TD></TR>
+<TR><TD><BUTTON type="button">Pour faire plaisir à Capucine!</BUTTON></TD></TR>
 <?php  }        $etat="valide";
                 $stmt->execute();
                 $nbvalides=0;
                 while ($row=$stmt->fetch()) { $nbvalides+=1;if ($row['id']==$id) {$ancre=$numero_creneau;} ?>
-                    <TR><TD onclick="this.children[0].style.display='block'" style="color : <?php if ($row['adherent']=='non') { echo "darkorange"; } else { echo "blue";} ?>;" onMouseOver="maj_info('info<?php echo secu_ecran_int($row['id']); ?>')">
+                    <TR><TD onclick="event.stopPropagation();this.children[0].style.display='block'" style="color : <?php if ($row['adherent']=='non') { echo "darkorange"; } else { echo "blue";} ?>;" onMouseOver="maj_info('info<?php echo secu_ecran_int($row['id']); ?>')">
 <DIV  class="formulairecache">
     <DIV>        Déplacer <?php echo secu_ecran($row['prenom']).' '.secu_ecran($row['nom']); ?> sur 
 <?php               foreach(['T1','T2','T3','T4'] as $tmp) {
@@ -74,13 +76,12 @@ if (isset($_POST['creneau'])) {
                         }
                     } ?>
                   
-                 <BUTTON type="button" onclick="event.stopPropagation();changeEtat(<?php echo secu_ecran_int($row['id'])?> ,'attente')">Mettre cette personne en attente</BUTTON>
                  <button type="button"  onclick="event.stopPropagation();changeAdherent(<?php echo secu_ecran_int($row['id']);?>)">Changer le statut adhérent</button>
-                 <BUTTON type="button" onclick="event.stopPropagation();this.parentNode.parentNode.style.display='none'"> Fermer cette fenêtre</BUTTON>
-                 <BUTTON type="button" onclick="event.stopPropagation();changeEtat(<?php echo secu_ecran_int($row['id'])?> ,'sup')">Suppression définitive</BUTTON>
+                 <span class="close" onclick="event.stopPropagation();this.parentNode.parentNode.style.display='none'">&times;</span>
     </DIV>  
 </DIV>                        <?php echo secu_ecran($row['prenom']).' '.secu_ecran($row['nom']); ?>
                     <button type="button" class="petitboutonmodif bgred" onclick="event.stopPropagation();changeEtat(<?php echo secu_ecran_int($row['id']); ?>,'supprime')"> X </button>
+                    <BUTTON type="button" class="petitboutonmodif bgyellow" onclick="event.stopPropagation();changeEtat(<?php echo secu_ecran_int($row['id'])?> ,'attente')"> AT </BUTTON>
                     </TD></TR>
                     
               <DIV hidden><DIV id="info<?php echo secu_ecran_int($row['id']); ?>">   <BR> 
@@ -107,9 +108,9 @@ if (isset($_POST['creneau'])) {
                              echo "<BUTTON type='button' onclick='event.stopPropagation();changeTerrain(".secu_ecran_int($row['id']).",\"".$tmp."\")'>".$tmp."</BUTTON>";
                         }
                     } ?>
+                 <button type="button" onclick="event.stopPropagation();valideAvecMail(<?php echo secu_ecran_int($row['id']);?>)">Valider avec envoi de mail</button>
                  <button type="button" onclick="event.stopPropagation();changeAdherent(<?php echo secu_ecran_int($row['id']);?>)">Changer le statut adhérent</button>
-                 <BUTTON type="button" onclick="event.stopPropagation();this.parentNode.parentNode.style.display='none'"> Fermer cette fenêtre</BUTTON>
-                 <BUTTON type="button" onclick="event.stopPropagation();changeEtat(<?php echo secu_ecran_int($row['id'])?> ,'sup')">Suppression définitive</BUTTON>
+                 <span class="close" onclick="event.stopPropagation();this.parentNode.parentNode.style.display='none'">&times;</span>
     </DIV>  
 </DIV>                        <?php echo secu_ecran($row['prenom']).' '.secu_ecran($row['nom']); ?>
                     <button type="button" class="petitboutonmodif bggreen" onclick="event.stopPropagation();changeEtat(<?php echo secu_ecran_int($row['id']); ?>,'valide')"> V </button>
@@ -133,9 +134,10 @@ if (isset($_POST['creneau'])) {
                 while ($row=$stmt->fetch()) { if ($row['id']==$id) {$ancre=$numero_creneau;}?>
                     <TR><TD onclick="this.children[0].style.display='block'" style="background-color : #838383;color : #AF0000;" onMouseOver="maj_info('info<?php echo secu_ecran_int($row['id']); ?>')">
 <DIV  class="formulairecache">
-    <DIV>        <button type="button" class="bggreen" onclick="event.stopPropagation();changeEtat(<?php echo secu_ecran_int($row['id']); ?>,'valide')"> Remettre <?php echo secu_ecran($row['prenom']).' '.secu_ecran($row['nom']); ?> sur le créneau </button>
-                 <BUTTON type="button" onclick="event.stopPropagation();this.parentNode.parentNode.style.display='none'"> Fermer cette fenêtre</BUTTON>
-                 <BUTTON type="button" onclick="event.stopPropagation();changeEtat(<?php echo secu_ecran_int($row['id'])?> ,'sup')">Suppression définitive</BUTTON>
+    <DIV>        <button type="button" onclick="event.stopPropagation();changeEtat(<?php echo secu_ecran_int($row['id']); ?>,'valide')"> Remettre <?php echo secu_ecran($row['prenom']).' '.secu_ecran($row['nom']); ?> sur le créneau </button>
+                 <button type="button" onclick="event.stopPropagation();valideAvecMail(<?php echo secu_ecran_int($row['id']);?>)">Valider avec envoi de mail</button>
+                 <BUTTON type="button" class="bgred" onclick="event.stopPropagation();changeEtat(<?php echo secu_ecran_int($row['id'])?> ,'sup')">Suppression définitive</BUTTON>
+                 <span class="close" onclick="event.stopPropagation();this.parentNode.parentNode.style.display='none'">&times;</span>
     </DIV>  
 </DIV>                        <?php echo secu_ecran($row['prenom']).' '.secu_ecran($row['nom']); ?>
                     </TD></TR>
@@ -162,9 +164,11 @@ if (isset($_POST['creneau'])) {
         <BR><BR>
         <DIV>
             <DIV>En <SPAN style="color: darkorange;">orange</SPAN> : les personnes  non adhérentes</DIV>
-            <DIV>En <SPAN style="color: red;">rouge</SPAN> : les personnes supprimées</DIV>
             <DIV><button type="button" class="petitboutonmodif bgred">X</button> pour supprimer une personne</DIV>
             <DIV><button type="button" class="petitboutonmodif bggreen">V</button> pour valider une personne</DIV>
+            <DIV><button type="button" class="petitboutonmodif bgyellow">AT</button> mettre en attente une personne</DIV>
+            <DIV style="background-color : lightgray;color :blue;">fond gris: en attente</DIV>
+            <DIV style="background-color : #838383;color : #AF0000;">en rouge : supprimées</DIV>
                  <BR><BR><BR>
             <DIV>Information sur la personne actuelle : </DIV>
             <DIV id="lesinfos">

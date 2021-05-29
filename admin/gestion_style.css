@@ -3,6 +3,23 @@
   text-align : center;
 }
 
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  padding-left : 5px;
+  padding-right : 5px;
+  border : 1px solid black;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
 .formulairecache {
   display : none;    
   position: fixed; /* Stay in place */
@@ -30,6 +47,9 @@
       background-color: darkorange;
 }
 
+.bgyellow {
+      background-color: #FFCC00;
+}
 
 .bgred {
       background-color: red;

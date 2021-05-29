@@ -44,7 +44,7 @@ function annuleterrain($idcreneau) {
             $mail->ContentType = 'text/plain';
             $mail->Subject='Annulation de créneau';
             $msg= <<<EOD
-Hello les beachers,
+Hello les beacheurs,
 
 Nous sommes désolés mais vous n'êtes pas assez nombreux pour le créneau de 
 EOD;
@@ -59,7 +59,8 @@ L'équipe SSA
 EOD;
             $mail->Body=$msg;
             $mail->AddAddress('capucine@sandsystem.com');
-            foreach ($liste_mail as $target) {
+            $mail->AddReplyTo('capucine@sandsystem.com');
+           foreach ($liste_mail as $target) {
                 $mail->AddBCC($target);
             }
             if (!$mail->send()) {
@@ -75,6 +76,7 @@ EOD;
 }
 
 function creationpdf($les_creneaux_demandes) {
+    // on ne met plus les gens en attente : commentaire
     global $dbh,$les_creneaux;
     $pdf = new PDF_MC_Table();
     $pdf->SetWidths(array(40,40,40,40));
@@ -84,9 +86,9 @@ function creationpdf($les_creneaux_demandes) {
     $stmt = $dbh->prepare("SELECT * FROM RESULTAT WHERE idcreneau=? AND terrain=? AND etat='valide'");
     $stmt->bindParam(1, $idcreneau);
     $stmt->bindParam(2, $terrain);
-    $stmt2 = $dbh->prepare("SELECT * FROM RESULTAT WHERE idcreneau=? AND terrain=? AND etat='attente'");
-    $stmt2->bindParam(1, $idcreneau);
-    $stmt2->bindParam(2, $terrain);
+    //$stmt2 = $dbh->prepare("SELECT * FROM RESULTAT WHERE idcreneau=? AND terrain=? AND etat='attente'");
+    //$stmt2->bindParam(1, $idcreneau);
+    //$stmt2->bindParam(2, $terrain);
     foreach ($les_creneaux_demandes as $idcreneau) {
         $le_creneau=trouveCreneau($idcreneau);
         $pdf->Cell(160,7,pdf(jolie_date($le_creneau['date']))." ".pdf($le_creneau['heure']),1,0,'C');
@@ -102,8 +104,8 @@ function creationpdf($les_creneaux_demandes) {
         [true,hexdec(substr($le_creneau['C2'],1,2)),hexdec(substr($le_creneau['C2'],3,2)),hexdec(substr($le_creneau['C2'],5,2))],
         [true,hexdec(substr($le_creneau['C3'],1,2)),hexdec(substr($le_creneau['C3'],3,2)),hexdec(substr($le_creneau['C3'],5,2))],
         [true,hexdec(substr($le_creneau['C4'],1,2)),hexdec(substr($le_creneau['C4'],3,2)),hexdec(substr($le_creneau['C4'],5,2))]];
-        $attente=[[],[],[],[]];
-        $attente_adh=[[],[],[],[]];
+        /*$attente=[[],[],[],[]];
+        $attente_adh=[[],[],[],[]];*/
         for ($i=0;$i<4;$i++) {
             $terrain=['T1','T2','T3','T4'][$i];
             $stmt->execute();
@@ -115,7 +117,7 @@ function creationpdf($les_creneaux_demandes) {
                 }
                 $k++;
             }
-            $stmt2->execute();
+            /*$stmt2->execute();
             $k=1;
             while ($row=$stmt2->fetch()) {  // récupère un terrain d'un des créneaux
                 array_push($attente[$i],pdf($row['prenom'])." ".pdf($row['nom']));
@@ -125,12 +127,12 @@ function creationpdf($les_creneaux_demandes) {
                     array_push($attente_adh[$i],[false,0,0,0]);
                 }
                 $k++;
-            }
+            }*/
         }
         for ($i=0;$i<9;$i++) {
             $pdf->Row([$lignes[$i][0],$lignes[$i][1],$lignes[$i][2],$lignes[$i][3]],[$adh[$i][0],$adh[$i][1],$adh[$i][2],$adh[$i][3]]);
         }
-        $nb_lignes_attente=max(count($attente[0]),count($attente[1]),count($attente[2]),count($attente[3]));
+        /*$nb_lignes_attente=max(count($attente[0]),count($attente[1]),count($attente[2]),count($attente[3]));
         for ($i=0;$i<$nb_lignes_attente;$i++) {
             $txt=["","","",""];
             $adh=[[false,0,0,0],[false,0,0,0],[false,0,0,0],[false,0,0,0]];
@@ -139,7 +141,7 @@ function creationpdf($les_creneaux_demandes) {
             if ($i<count($attente[2])) { $txt[2]=$attente[2][$i];$adh[2]=$attente_adh[2][$i];}
             if ($i<count($attente[3])) { $txt[3]=$attente[3][$i];$adh[3]=$attente_adh[3][$i];}
             $pdf->Row($txt,$adh,false);
-        }
+        }*/
         $pdf->Ln();
    }
     $pdf->Output("F","creneauxPDF.pdf");
@@ -147,11 +149,11 @@ function creationpdf($les_creneaux_demandes) {
 }
 
 function creationenvoi($les_creneaux_demandes) {
+    // suppression des mails des gens en attente
     global $dbh, $les_creneaux, $mail_from, $mail_fromName;
-
     creationpdf($les_creneaux_demandes);
     $liste_mail=[];
-    $stmt = $dbh->prepare("SELECT mail FROM RESULTAT WHERE idcreneau=? AND (etat='valide' OR etat='attente')");
+    $stmt = $dbh->prepare("SELECT mail FROM RESULTAT WHERE idcreneau=? AND etat='valide'"); // suppression des gens en attente ici
     $stmt->bindParam(1, $idcreneau);
     foreach ($les_creneaux_demandes as $idcreneau) {
         $stmt->execute();
@@ -168,16 +170,13 @@ function creationenvoi($les_creneaux_demandes) {
     $mail->ContentType = 'text/plain';
     $mail->Subject='Créneaux de jeu libre';
     $mail->Body= <<<EOD
-Hello les beachers, 😎 
+Hello les beacheurs, 😎 
 
 Vous trouverez en pièce-jointe le planning pour les jours à venir.
 
-En cas d'annulation, merci de prévenir le plus tôt possible en
-répondant à cet e-mail, en mettant en copie Capucine.
+En cas d'annulation, merci de prévenir le plus tôt possible en répondant à cet e-mail, ou en écrivant à capucine@sandsystem.com
 
-Pour rappel, toute personne n'ayant pas annulé sa réservation au plus
-tard la veille du créneau (sauf cas extrême) se verra refuser l'accès
-au site pour la semaine suivante.
+Pour rappel, toute personne n'ayant pas annulé sa réservation au plus tard la veille du créneau (sauf cas extrême) se verra refuser l'accès au site pour la semaine suivante.
 
 À bientôt sur les terrains, 😊 
 -- 
@@ -313,34 +312,33 @@ function NbLines($w,$txt)
 }
 }
 
-function envoie_mail($nom,$target,$type_mail,$textecreneau) { // type_mail : annulation, confirmation
-    return ;     // trop de spam donc non
+function envoie_mail($prenom,$target,$type_mail,$textecreneau) { // type_mail : annulation, confirmation
+    global  $mail_from, $mail_fromName;
     $mail = new PHPmailer();
     $mail->CharSet = 'UTF-8';
-    $mail->From='jerome.99@hotmail.fr';
-    $mail->FromName='Jerome Nizon';
+    $mail->setFrom($mail_from, $mail_fromName);
     $mail->AddAddress($target);
-    $mail->AddReplyTo('jerome.99@hotmail.fr');
+    $mail->AddReplyTo('capucine@sandsystem.com');
     $mail->ContentType = 'text/plain';
-    $msg="Bonjour ".$nom."!\n\n";
-    $msg.="Tu as demandé un créneau ".$textecreneau."\n";
+    $msg="Bonjour ".$prenom."!\n\n";
+    $msg.="Je te confirme que le créneau demandé ".$textecreneau." est bien validé.\n\n";
     if ($type_mail=="confirmation") {
         $mail->Subject='Confirmation de créneau';
-        $msg.="Nous avons le plaisir de t'annoncer que ce créneau aura bien lieu!";
+        $msg.="Pense à t'inscrire plus tôt une prochain fois, cela simplifie le travail pour nous. 😉 \n\n";
     }  else {
         $mail->Subject='Annulation de créneau';
         $msg.="Malheureusement, ce créneau n'est plus disponible.";
 
     }
-    $msg.="\n\n"."L'équipe SSA";
+    $msg.="-- \n"."L'équipe SSA";
     $mail->Body=$msg;
-    if( false &&!$mail->Send()){ //Teste le return code de la fonction
+    if (!$mail->Send()){ //Teste le return code de la fonction
         //echo 'Mailer Error: ' . $mail->ErrorInfo;
         $mail->SmtpClose();
         unset($mail);
-        return false;
+        return false; 
     }
-    echo "<BR> Le mail qui sera envoyé : <BR><TEXTAREA style='width: 80%;heigth : 50px;text-align : left;'>".$msg."</TEXTAREA>";
+    //echo "<BR> Le mail qui sera envoyé : <BR><TEXTAREA style='width: 80%;heigth : 50px;text-align : left;'>".$msg."</TEXTAREA>";
     $mail->SmtpClose();
     unset($mail);
     return true;
@@ -473,20 +471,17 @@ function change_etat($id) {
             else if ($etat_actuel=='attente') {$personneattente--; $libres++;}
             else if (!$etat_actuel=='supprime') {throw "erreur inattendue";}
             $stmt->execute();$stmt2->execute();
-            envoie_mail($personne['nom'],$personne['mail'],'suppression',jolie_date($lecreneau['date']).", ".$lecreneau['heure']." en ".$typeterrain);
         } else if ($etat=='supprime') {
             $libres++;
             if ($etat_actuel=='valide') {$personnevalide--;}
             else if ($etat_actuel=='attente') {$personneattente--;}
             else {throw "erreur inattendue";}
             $stmt->execute();$stmt2->execute();
-            envoie_mail($personne['nom'],$personne['mail'],'suppression',jolie_date($lecreneau['date']).", ".$lecreneau['heure']." en ".$typeterrain);
         } else if ($etat=='valide' && $etat_actuel=='attente') {
             if ($personnevalide<$lecreneau['VMAX'.$numero]) {
                 $personnevalide++;
                 $personneattente--;
                 $stmt->execute(); $stmt2->execute();
-                envoie_mail($personne['nom'],$personne['mail'],'confirmation',jolie_date($lecreneau['date']).", ".$lecreneau['heure']." en ".$typeterrain);
             } else {
                 //echo "\n Le créneau ne peut plus accepter de personnes validées.\n";
             }
@@ -495,7 +490,6 @@ function change_etat($id) {
                 $personnevalide++;
                 $libres--;
                 $stmt->execute();$stmt2->execute();
-                envoie_mail($personne['nom'],$personne['mail'],'confirmation',jolie_date($lecreneau['date']).", ".$lecreneau['heure']." en ".$typeterrain);
             } else {
                 $personneattente++;
                 $libres--;
@@ -750,7 +744,7 @@ function reinitialise_creneau($id) { // remets tout le monde en attente en fait
     global $dbh,$les_creneaux;
     try {
         $le_creneau=trouveCreneau($id);
-        $stmt=$dbh->prepare ("UPDATE RESULTAT SET etat='attente' WHERE idcreneau=?");
+        $stmt=$dbh->prepare ("UPDATE RESULTAT SET etat='attente' WHERE idcreneau=? AND etat!='sup'");
         $stmt->bindParam(1,$id);
         $stmt->execute();
         $personnes_attente=[];
@@ -762,7 +756,7 @@ function reinitialise_creneau($id) { // remets tout le monde en attente en fait
         $places_libres['feminin']=0;
         $places_libres['mixte']=0;
         $places_libres['masculin']=0;
-        $stmt=$dbh->prepare("SELECT * FROM RESULTAT WHERE terrain=? AND idcreneau=?");
+        $stmt=$dbh->prepare("SELECT * FROM RESULTAT WHERE terrain=? AND idcreneau=? AND etat!='sup'");
         $stmt->bindParam(1,$t);
         $stmt->bindParam(2,$id);
         foreach (['1','2','3','4'] as $numero_terrain) {
@@ -822,6 +816,61 @@ function trouveCreneau($id) { // renvoie la ligne de $liste_creneau associé au 
     }
     echo "erreur dans la base de données des créneaux";
     die();
+}
+
+function valideavecmail($id) {
+    global $dbh;
+    try {
+        $stmt = $dbh->prepare("SELECT * FROM RESULTAT WHERE id=?");
+        $stmt->bindParam(1,$id);
+        $stmt->execute();
+        $personne=$stmt->fetch();
+        $etat_actuel=$personne['etat'];
+        $terrain=$personne['terrain'];
+        if (!in_array($etat_actuel,['attente','supprime','annule'])) { throw('erreur'); }
+        if (!in_array($terrain,['T1','T2','T3','T4'])) { throw('erreur'); }
+        $numero=substr($terrain,1,1);
+        $stmt = $dbh->prepare("SELECT * FROM CRENEAUX WHERE id=?");
+        $stmt->bindParam(1,$personne['idcreneau']);
+        $stmt->execute();
+        $lecreneau=$stmt->fetch();
+        $typeterrain=$lecreneau[$terrain];
+        if (!in_array($typeterrain,['feminin','mixte','masculin'])) { throw('erreur'); }
+        $libres=$lecreneau[$typeterrain];
+        $personnevalide=$lecreneau['V'.$numero];
+        $personneattente=$lecreneau['A'.$numero];
+        $stmt= $dbh->prepare("UPDATE RESULTAT SET etat='valide' WHERE id=?");
+        $stmt->bindParam(1,$id);
+        $stmt2=$dbh->prepare("UPDATE CRENEAUX SET ".$typeterrain."=?, V".$numero."=?,A".$numero."=? WHERE id=?");
+        $stmt2->bindParam(1,$libres);
+        $stmt2->bindParam(2,$personnevalide);
+        $stmt2->bindParam(3,$personneattente);
+        $stmt2->bindParam(4,$personne['idcreneau']);
+        if ($etat_actuel=='attente') {
+            if ($personnevalide<$lecreneau['VMAX'.$numero]) {
+                $personnevalide++;
+                $personneattente--;
+                $stmt->execute(); $stmt2->execute();
+                envoie_mail($personne['prenom'],$personne['mail'],'confirmation',jolie_date($lecreneau['date']).", ".$lecreneau['heure']." en ".$typeterrain);
+            } else {
+                echo "\n Le créneau ne peut plus accepter de personnes validées.\n";
+            }
+        } else if ($etat_actuel=='supprime') {
+            if ($personnevalide<$lecreneau['VMAX'.$numero]) {
+                $personnevalide++;
+                $libres--;
+                $stmt->execute();$stmt2->execute();
+                envoie_mail($personne['prenom'],$personne['mail'],'confirmation',jolie_date($lecreneau['date']).", ".$lecreneau['heure']." en ".$typeterrain);
+            } else {
+                $personneattente++;
+                $libres--;
+                $etat='attente';
+                $stmt->execute();$stmt2->execute();
+            }
+        } else { echo "combinaison imprévue de changement d'état";}
+    } catch (Exception $e) {
+        echo "Erreur dans la validation avec mail";
+    }
 }
 
 function valide_creneau($id) {

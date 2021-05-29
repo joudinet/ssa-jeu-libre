@@ -25,24 +25,19 @@ function envoie_mail_inscription($nom,$target,$creneau_demandes) {
     $msg= <<<EOD
 Bonjour $nom,
 
-Ta demande de participation au jeu libre a bien été prise en compte
-pour les créneaux suivants :
+Ta demande de participation au jeu libre a bien été prise en compte pour les créneaux suivants :
 
 EOD;
     foreach ($creneau_demandes as $uncreneau) {
         $msg.=jolie_date($uncreneau[0]).", ".$uncreneau[1]." en ".$uncreneau[2]."\n";
     }
-    $msg.="\n";
-    $msg.= <<<EOD
-Nous reviendrons vers toi prochainement pour te confirmer si tes choix
-ont été validés. Si jamais tu as fait une erreur dans tes choix,
-préviens nous aussi vite que possible en répondant à cet email, 
-ou en envoyant un mail à capucine@sandsystem.com
-
-☀️ Petite nouveauté : un onglet a été ajouté sur la page d'inscription
-pour que tu saches en temps réél combien de personnes sont inscrites
-sur le(s) créneau(x) demandé(s) !
-
+    $msg.="\n\n";
+    $msg.= "Nous reviendrons vers toi prochainement pour te confirmer si tes choix ont été validés. ";
+    $msg.="Si jamais tu as fait une erreur dans tes choix, préviens nous aussi vite que possible en répondant à cet email, ";
+    $msg.="ou en écrivant à capucine@sandsystem.com\n\n";
+    $msg.="☀️ Petite nouveauté : un onglet a été ajouté sur la page d'inscription pour que tu saches en temps réél combien ";
+    $msg.="de personnes sont inscrites sur le(s) créneau(x) demandé(s) !\n\n";
+    $msg.=<<<EOD
 À bientôt sur les terrains, 😊 
 -- 
 L'équipe SSA
@@ -58,10 +53,26 @@ EOD;
     return $sent;
 }
 
+function test_egal($a,$b) { // test l'égalité de deux chaine : sans espace, sans la casse
+    $aa=str_replace([" ","-","'"],"",$a);
+    $aa=str_replace(["é","è","ë","ê"],"e",$aa);
+    $aa=str_replace(["à","ä","â"],"a",$aa);
+    $aa=str_replace(["ï","î"],"i",$aa);
+    $aa=str_replace(["ö","ô"],"o",$aa);
+    $aa=str_replace(["ù","ü","û"],"u",$aa);
+    $bb=str_replace([" ","-","'"],"",$b);
+    $bb=str_replace(["é","è","ë","ê"],"e",$bb);
+    $bb=str_replace(["à","ä","â"],"a",$bb);
+    $bb=str_replace(["ï","î"],"i",$bb);
+    $bb=str_replace(["ö","ô"],"o",$bb);
+    $bb=str_replace(["ù","ü","û"],"u",$bb);
+    return strtoupper($aa)==strtoupper($bb);    
+}
+
 function test_nom($nom,$prenom,$stmt) { //$stmt requete "nom,prenom" pour le terrain à tester
     // renvoie vraie si les noms sont identiques
     while ($row=$stmt->fetch()) {
-        if ($nom==$row['nom'] && $prenom==$row['prenom']) {
+        if (test_egal($nom,$row['nom']) && test_egal($prenom,$row['prenom'])) {
             return true;
         }
     }
