@@ -36,8 +36,8 @@ EOD;
     $msg.= <<<EOD
 Nous reviendrons vers toi prochainement pour te confirmer si tes choix
 ont été validés. Si jamais tu as fait une erreur dans tes choix,
-préviens nous aussi vite que possible en répondant à cet email, 
-ou en envoyant un mail à capucine@sandsystem.com
+préviens nous aussi vite que possible en répondant à cet email, en
+mettant Capucine en copie.
 
 ☀️ Petite nouveauté : un onglet a été ajouté sur la page d'inscription
 pour que tu saches en temps réél combien de personnes sont inscrites
@@ -58,10 +58,26 @@ EOD;
     return $sent;
 }
 
+function test_egal($a,$b) { // test l'égalité de deux chaine : sans espace, sans la casse
+    $aa=str_replace([" ","-","'"],"",$a);
+    $aa=str_replace(["é","è","ë","ê"],"e",$aa);
+    $aa=str_replace(["à","ä","â"],"a",$aa);
+    $aa=str_replace(["ï","î"],"i",$aa);
+    $aa=str_replace(["ö","ô"],"o",$aa);
+    $aa=str_replace(["ù","ü","û"],"u",$aa);
+    $bb=str_replace([" ","-","'"],"",$b);
+    $bb=str_replace(["é","è","ë","ê"],"e",$bb);
+    $bb=str_replace(["à","ä","â"],"a",$bb);
+    $bb=str_replace(["ï","î"],"i",$bb);
+    $bb=str_replace(["ö","ô"],"o",$bb);
+    $bb=str_replace(["ù","ü","û"],"u",$bb);
+    return strtoupper($aa)==strtoupper($bb);    
+}
+
 function test_nom($nom,$prenom,$stmt) { //$stmt requete "nom,prenom" pour le terrain à tester
     // renvoie vraie si les noms sont identiques
     while ($row=$stmt->fetch()) {
-        if ($nom==$row['nom'] && $prenom==$row['prenom']) {
+        if (test_egal($nom,$row['nom']) && test_egal($prenom,$row['prenom'])) {
             return true;
         }
     }
