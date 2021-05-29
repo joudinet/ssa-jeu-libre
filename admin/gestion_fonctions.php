@@ -312,7 +312,7 @@ function NbLines($w,$txt)
 }
 }
 
-function envoie_mail($prenom,$target,$type_mail,$textecreneau) { // type_mail : annulation, confirmation
+function envoie_mail($prenom,$target,$type_mail,$textecreneau) { // type_mail : complet, confirmation
     global  $mail_from, $mail_fromName;
     $mail = new PHPmailer();
     $mail->CharSet = 'UTF-8';
@@ -321,13 +321,15 @@ function envoie_mail($prenom,$target,$type_mail,$textecreneau) { // type_mail : 
     $mail->AddReplyTo('capucine@sandsystem.com');
     $mail->ContentType = 'text/plain';
     $msg="Bonjour ".$prenom."!\n\n";
-    $msg.="Je te confirme que le créneau demandé ".$textecreneau." est bien validé.\n\n";
     if ($type_mail=="confirmation") {
         $mail->Subject='Confirmation de créneau';
+        $msg.="Je te confirme que le créneau demandé ".$textecreneau." est bien validé.\n\n";
         $msg.="Pense à t'inscrire plus tôt une prochain fois, cela simplifie le travail pour nous. 😉 \n\n";
     }  else {
-        $mail->Subject='Annulation de créneau';
-        $msg.="Malheureusement, ce créneau n'est plus disponible.";
+        $mail->Subject='Créneau complet';
+        $msg.="Nous sommes désolés mais il n'y a plus de place sur le créneau demandé : ".$textecreneau."\n\n";
+        $msg.="N'hésite pas à t'inscrire pour un créneau la semaine prochaine et nous ferons au mieux pour répondre à ta/tes demande(s)..\n\n";
+        $msg.="A bientôt sur les terrains !\n\n";
 
     }
     $msg.="-- \n"."L'équipe SSA";
@@ -642,6 +644,26 @@ function creationCreneau() {
         $stmt->execute();
     } catch (Exception $e) {
         echo "Erreur dans la saisie des éléments du créneaux";
+    }
+}
+
+function indiquecreneaucomplet($id) {
+    global $dbh;
+    try {
+        $stmt = $dbh->prepare("SELECT * FROM RESULTAT WHERE id=?");
+        $stmt->bindParam(1,$id);
+        $stmt->execute();
+        $personne=$stmt->fetch();
+        $terrain=$personne['terrain'];
+        $stmt = $dbh->prepare("SELECT * FROM CRENEAUX WHERE id=?");
+        $stmt->bindParam(1,$personne['idcreneau']);
+        $stmt->execute();
+        $lecreneau=$stmt->fetch();
+        $typeterrain=$lecreneau[$terrain];
+        if (!in_array($typeterrain,['feminin','mixte','masculin'])) { throw('erreur'); }
+        envoie_mail($personne['prenom'],$personne['mail'],'complet',jolie_date($lecreneau['date']).", ".$lecreneau['heure']." en ".$typeterrain);
+    } catch (Exception $e) {
+        echo "Erreur dans la validation avec mail";
     }
 }
 

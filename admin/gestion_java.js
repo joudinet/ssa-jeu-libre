@@ -52,6 +52,12 @@ function fermerFormulaireCache() {
     formulairecache.style.display="none"
 }
 
+function indiqueCreneauComplet(id) {
+    but.value="indiquecreneaucomplet"
+    inputid.value=id
+    Formulaire.submit()
+}
+
 function maj_info(id) { // rendre visible la boite de commentaire pour le joueur id
     while (lesinfos.firstChild) {
         lesinfos.removeChild(lesinfos.lastChild);
