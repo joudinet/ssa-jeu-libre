@@ -38,41 +38,34 @@ EOD;
     $msg.="☀️ Petite nouveauté : un onglet a été ajouté sur la page d'inscription pour que tu saches en temps réél combien ";
     $msg.="de personnes sont inscrites sur le(s) créneau(x) demandé(s) !\n\n";
     $msg.=<<<EOD
-À bientôt sur les terrains, 😊 
+À bientôt sur les terrains, 😊
 -- 
 L'équipe SSA
-EOD;
+EOD; // ' to fix highlighting
     $mail->Body=$msg;
     if(!$mail->send()) {
         echo 'Mailer Error: ' . $mail->ErrorInfo;
         $sent = false;
     }
-    //echo "<BR> Le mail qui sera envoyé : <BR><TEXTAREA style='width: 80%;heigth : 50px;'>".$msg."</TEXTAREA>";
     $mail->SmtpClose();
     unset($mail);
     return $sent;
 }
 
-function test_egal($a,$b) { // test l'égalité de deux chaine : sans espace, sans la casse
-    $aa=str_replace([" ","-","'"],"",$a);
-    $aa=str_replace(["é","è","ë","ê"],"e",$aa);
-    $aa=str_replace(["à","ä","â"],"a",$aa);
-    $aa=str_replace(["ï","î"],"i",$aa);
-    $aa=str_replace(["ö","ô"],"o",$aa);
-    $aa=str_replace(["ù","ü","û"],"u",$aa);
-    $bb=str_replace([" ","-","'"],"",$b);
-    $bb=str_replace(["é","è","ë","ê"],"e",$bb);
-    $bb=str_replace(["à","ä","â"],"a",$bb);
-    $bb=str_replace(["ï","î"],"i",$bb);
-    $bb=str_replace(["ö","ô"],"o",$bb);
-    $bb=str_replace(["ù","ü","û"],"u",$bb);
-    return strtoupper($aa)==strtoupper($bb);    
+// normalize a string
+function normalize_str($str) {
+// Normalizing a string with FROM_D splits the diacritics out from the
+// base characters, then eliminate them with preg_replace.
+    return strtolower(
+        preg_replace('/[\x{0300}-\x{036f}]/u', "",
+                     Normalizer::normalize($str, Normalizer::FORM_D));
 }
 
 function test_nom($nom,$prenom,$stmt) { //$stmt requete "nom,prenom" pour le terrain à tester
-    // renvoie vraie si les noms sont identiques
+    // renvoie vraie si les noms et prenoms sont identiques
     while ($row=$stmt->fetch()) {
-        if (test_egal($nom,$row['nom']) && test_egal($prenom,$row['prenom'])) {
+        if (normalize_str($nom) == normalize_str($row['nom']) and
+            normalize_str($prenom) == normalize_str($row['prenom'])) {
             return true;
         }
     }
