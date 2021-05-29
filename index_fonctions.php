@@ -25,24 +25,19 @@ function envoie_mail_inscription($nom,$target,$creneau_demandes) {
     $msg= <<<EOD
 Bonjour $nom,
 
-Ta demande de participation au jeu libre a bien été prise en compte
-pour les créneaux suivants :
+Ta demande de participation au jeu libre a bien été prise en compte pour les créneaux suivants :
 
 EOD;
     foreach ($creneau_demandes as $uncreneau) {
         $msg.=jolie_date($uncreneau[0]).", ".$uncreneau[1]." en ".$uncreneau[2]."\n";
     }
-    $msg.="\n";
-    $msg.= <<<EOD
-Nous reviendrons vers toi prochainement pour te confirmer si tes choix
-ont été validés. Si jamais tu as fait une erreur dans tes choix,
-préviens nous aussi vite que possible en répondant à cet email, en
-mettant Capucine en copie.
-
-☀️ Petite nouveauté : un onglet a été ajouté sur la page d'inscription
-pour que tu saches en temps réél combien de personnes sont inscrites
-sur le(s) créneau(x) demandé(s) !
-
+    $msg.="\n\n";
+    $msg.= "Nous reviendrons vers toi prochainement pour te confirmer si tes choix ont été validés. ";
+    $msg.="Si jamais tu as fait une erreur dans tes choix, préviens nous aussi vite que possible en répondant à cet email, ";
+    $msg.="ou en écrivant à capucine@sandsystem.com\n\n";
+    $msg.="☀️ Petite nouveauté : un onglet a été ajouté sur la page d'inscription pour que tu saches en temps réél combien ";
+    $msg.="de personnes sont inscrites sur le(s) créneau(x) demandé(s) !\n\n";
+    $msg.=<<<EOD
 À bientôt sur les terrains, 😊 
 -- 
 L'équipe SSA
