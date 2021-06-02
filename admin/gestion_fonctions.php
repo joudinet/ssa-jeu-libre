@@ -324,7 +324,7 @@ function envoie_mail($prenom,$target,$type_mail,$textecreneau) { // type_mail : 
     if ($type_mail=="confirmation") {
         $mail->Subject='Confirmation de créneau';
         $msg.="Je te confirme que le créneau demandé ".$textecreneau." est bien validé.\n\n";
-        $msg.="Pense à t'inscrire plus tôt une prochain fois, cela simplifie le travail pour nous. 😉 \n\n";
+        $msg.="Pensez à vous inscrire plus tôt une prochaine fois, cela simplifie le travail pour nous. 😉 \n\n";
     }  else {
         $mail->Subject='Créneau complet';
         $msg.="Nous sommes désolés mais il n'y a plus de place sur le créneau demandé : ".$textecreneau."\n\n";
@@ -664,6 +664,28 @@ function indiquecreneaucomplet($id) {
         envoie_mail($personne['prenom'],$personne['mail'],'complet',jolie_date($lecreneau['date']).", ".$lecreneau['heure']." en ".$typeterrain);
     } catch (Exception $e) {
         echo "Erreur dans la validation avec mail";
+    }
+}
+
+function maj_annonce() {
+    global $dbh;
+    if (isset($_POST["annonce"])) {
+        try {
+            $stmt=$dbh->query("SELECT * FROM ANNONCE WHERE id=1");
+            while ($row=$stmt->fetch()) {
+                $stmt=$dbh->prepare("UPDATE ANNONCE SET texte=? WHERE id=1");
+                $stmt->bindParam(1,$txt);
+                $txt=$_POST["annonce"];
+                $stmt->execute();
+                return  ;              
+            }
+            $stmt=$dbh->prepare("INSERT INTO ANNONCE (id,texte) VALUES (1,?)");
+            $stmt->bindParam(1,$txt);
+            $txt=$_POST["annonce"];
+            $stmt->execute();
+        } catch (Exception $e) {
+            echo "Erreur dans la mise à jour de l'annonce";
+        }
     }
 }
 
