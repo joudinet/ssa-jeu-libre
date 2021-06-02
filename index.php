@@ -25,11 +25,17 @@ ferme_bdd();
 <body>
     <nav class="menu">
         <ul>
-             <li><a href="#">Demande d'inscription</a></li><!-- ' -->
+             <li><a href="#">Demande de pré-inscription</a></li><!-- ' -->
              <li><a href="inscrits.php">Occupation des terrains</a></li>
         </ul>
     </nav>
-    <h1 class="titre_index">Inscription aux créneaux de jeu libre à Sand System</h1>
+    <h1 class="titre_index">Pré-inscription aux créneaux de jeu libre à Sand System</h1>
+    
+    <h4>⚠️ les créneaux demandés ne sont pas automatiquement attribués ! <BR><BR>
+
+Un email sera envoyé les lundis soirs et les jeudis soir avec les créneaux définitifs et la liste d'attente : 
+le club répartit les demandes en priorisant une séance par personne et plus s'il reste des places disponibles ! 
+Cette règle ne vaut pas pour les personnes s'inscrivant la veille pour le lendemain ou une fois les tableaux définitifs envoyés 😉</h2>
 
     <form id="le_formulaire_index" class="formulaire_index" method="post" action="index.php">
         <fieldset>
@@ -70,7 +76,7 @@ ferme_bdd();
         </fieldset>
         <fieldset>
             <legend>Partenaires</legend>
-            <textarea name="commentaire" placeholder="Indique ici si tu souhaites jouer avec quelqu'un en particulier"></textarea>
+            <textarea name="commentaire" placeholder="Partenaire(s) souhaité(s) - Si tu as une remarque et/ou une question, c'est ici aussi !"></textarea>
         </fieldset>
     <fieldset class="creneaux_index" id="creneauxdispos">
         <legend>Liste des créneaux disponibles : (créneaux sélectionnés en orange)</legend>

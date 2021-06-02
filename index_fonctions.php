@@ -21,7 +21,7 @@ function envoie_mail_inscription($nom,$target,$creneau_demandes) {
     $mail->setFrom($mail_from, $mail_fromName);
     $mail->AddAddress($target);
     $mail->AddReplyTo('capucine@sandsystem.com');
-    $mail->Subject="Demande d'inscription au jeu libre en cours";
+    $mail->Subject="Demande de pré-inscription au jeu libre en cours";
     $msg= <<<EOD
 Bonjour $nom,
 
@@ -31,17 +31,21 @@ EOD;
     foreach ($creneau_demandes as $uncreneau) {
         $msg.=jolie_date($uncreneau[0]).", ".$uncreneau[1]." en ".$uncreneau[2]."\n";
     }
-    $msg.="\n\n";
-    $msg.= "Nous reviendrons vers toi prochainement pour te confirmer si tes choix ont été validés. ";
+    $msg.="\n";
+    $msg.="⚠️ les créneaux demandés ne sont pas automatiquement attribués !\n\n";
+    $msg.="Un email sera envoyé les lundis soirs et les jeudis soir avec les créneaux définitifs et la liste d'attente : ";
+    $msg.="le club répartit les demandes en priorisant une séance par personne et plus s'il reste des places disponibles ! ";
+    $msg.="Cette règle ne vaut pas pour les personnes s'inscrivant la veille pour le lendemain ou une fois les tableaux définitifs envoyés 😉\n\n";
     $msg.="Si jamais tu as fait une erreur dans tes choix, préviens nous aussi vite que possible en répondant à cet email, ";
     $msg.="ou en écrivant à capucine@sandsystem.com\n\n";
-    $msg.="☀️ Petite nouveauté : un onglet a été ajouté sur la page d'inscription pour que tu saches en temps réél combien ";
+    $msg.="☀️ Petite nouveauté : un onglet a été ajouté sur la page d'inscription pour que tu saches en temps réel combien ";
     $msg.="de personnes sont inscrites sur le(s) créneau(x) demandé(s) !\n\n";
     $msg.=<<<EOD
 À bientôt sur les terrains, 😊
 -- 
 L'équipe SSA
-EOD; // ' to fix highlighting
+EOD;
+ // ' to fix highlighting : je décale d'une ligne ce commentaire : ça fait bugguer l'éditeur de mon fournisseur sinon
     $mail->Body=$msg;
     if(!$mail->send()) {
         echo 'Mailer Error: ' . $mail->ErrorInfo;
