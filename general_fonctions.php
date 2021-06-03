@@ -11,6 +11,50 @@ $couleurpossible=["#CBCBCB","#FF0099","#00CCFF","#33FF00"]; // reservé, fémini
 $les_couleurs=["feminin"=>"#00CCFF","masculin"=>"#33FF00","mixte"=>"#FF0099","reserve"=>"#CBCBCB"];
 
 
+function lire_annonce() {
+    global $dbh;
+    $stmt=$dbh->query("SELECT * FROM ANNONCE WHERE id=1");
+    while ($row=$stmt->fetch()) {
+        $text=$row["texte"];
+        return explode("\n",$text);
+    }
+    return [];
+}
+
+function affiche_annonce() {
+    global $annonce;
+    if (!$annonce==[]) {
+        echo "<h3>";
+        foreach ($annonce as $ligne) {
+            echo secu_ecran($ligne);
+            echo "<BR>";
+        }
+        echo "</h3>";
+    }
+}
+
+function lire_les_creneaux_du_jour() { // renvoie les créneaux du jour classés par ordre chronologique, en vérifiant les données
+    global $dbh,$terrainpossible,$couleurpossible;
+    try {
+        $date=date('Y-m-d');
+        $stmt=$dbh->prepare('SELECT * FROM CRENEAUX WHERE date=? ORDER BY heure');
+        $stmt->bindParam(1,$date);
+        $stmt->execute();
+        $tab_res=[];
+        while ($row=$stmt->fetch()) {
+            if (!in_array($row['C1'],$couleurpossible) || !in_array($row['C2'],$couleurpossible) || !in_array($row['C3'],$couleurpossible) || !in_array($row['C4'],$couleurpossible)) {
+                throw new Exception('erreur');   }
+            if (!in_array($row['T1'],$terrainpossible) || !in_array($row['T2'],$terrainpossible) || !in_array($row['T3'],$terrainpossible) || !in_array($row['T4'],$terrainpossible)) {
+                throw new Exception('erreur');   }
+            array_push($tab_res,$row);
+        }
+        return $tab_res;
+    } catch (Exception $e) {
+        print "Erreur dans la base de données des créneaux";
+        die();
+    }
+}
+
 function lire_les_creneaux($vieux=false) { // renvoie les créneaux classés par ordre chronologique, en vérifiant les données
     global $dbh,$terrainpossible,$couleurpossible;
     try {

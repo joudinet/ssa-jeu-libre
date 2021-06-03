@@ -20,6 +20,7 @@ if (isset($_POST['nom'])) {
     }
 }
 $les_creneaux=lire_les_creneaux();
+$annonce=lire_annonce();
 ferme_bdd();
 ?>
 <body>
@@ -31,6 +32,7 @@ ferme_bdd();
     </nav>
     <h1 class="titre_index">Pré-inscription aux créneaux de jeu libre à Sand System</h1>
     
+    <?php echo affiche_annonce(); ?>
     <h4>⚠️ les créneaux demandés ne sont pas automatiquement attribués ! <BR><BR>
 
 Un email sera envoyé les lundis soirs et les jeudis soir avec les créneaux définitifs et la liste d'attente : 
