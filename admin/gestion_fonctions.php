@@ -57,9 +57,9 @@ Nous devons annuler ce créneau mais ce n'est que partie remise!
 -- 
 L'équipe SSA
 EOD;
+// 'fix quote highlighting
             $mail->Body=$msg;
-            $mail->AddAddress('capucine@sandsystem.com');
-            $mail->AddReplyTo('capucine@sandsystem.com');
+            $mail->AddAddress($mail_from);
            foreach ($liste_mail as $target) {
                 $mail->AddBCC($target);
             }
@@ -67,12 +67,12 @@ EOD;
                 echo 'Mailer error: ' . $mail->ErrorInfo;
             }
             $mail->SmtpClose();
-            unset($mail); 
+            unset($mail);
         }
     } catch (Exception $e) {
         echo "Erreur dans l'annulation de terrain";
     }
-    
+
 }
 
 function creationpdf($les_creneaux_demandes) {
@@ -170,21 +170,20 @@ function creationenvoi($les_creneaux_demandes) {
     $mail->ContentType = 'text/plain';
     $mail->Subject='Créneaux de jeu libre';
     $mail->Body= <<<EOD
-Hello les beacheurs, 😎 
+Hello les beacheurs, 😎
 
 Vous trouverez en pièce-jointe le planning pour les jours à venir.
 
-En cas d'annulation, merci de prévenir le plus tôt possible en répondant à cet e-mail, ou en écrivant à capucine@sandsystem.com
+En cas d'annulation, merci de prévenir le plus tôt possible en répondant à cet e-mail.
 
 Pour rappel, toute personne n'ayant pas annulé sa réservation au plus tard la veille du créneau (sauf cas extrême) se verra refuser l'accès au site pour la semaine suivante.
 
-À bientôt sur les terrains, 😊 
+À bientôt sur les terrains, 😊
 -- 
 L'équipe SSA
 EOD;
     $mail->AddAttachment('creneauxPDF.pdf');
-    $mail->AddAddress('capucine@sandsystem.com');
-    $mail->AddReplyTo('capucine@sandsystem.com');
+    $mail->AddAddress($mail_from);
     foreach ($liste_mail as $target) {
         $mail->AddBCC($target);
     }
@@ -318,7 +317,6 @@ function envoie_mail($prenom,$target,$type_mail,$textecreneau) { // type_mail : 
     $mail->CharSet = 'UTF-8';
     $mail->setFrom($mail_from, $mail_fromName);
     $mail->AddAddress($target);
-    $mail->AddReplyTo('capucine@sandsystem.com');
     $mail->ContentType = 'text/plain';
     $msg="Bonjour ".$prenom."!\n\n";
     if ($type_mail=="confirmation") {
@@ -338,7 +336,7 @@ function envoie_mail($prenom,$target,$type_mail,$textecreneau) { // type_mail : 
         //echo 'Mailer Error: ' . $mail->ErrorInfo;
         $mail->SmtpClose();
         unset($mail);
-        return false; 
+        return false;
     }
     //echo "<BR> Le mail qui sera envoyé : <BR><TEXTAREA style='width: 80%;heigth : 50px;text-align : left;'>".$msg."</TEXTAREA>";
     $mail->SmtpClose();
@@ -677,7 +675,7 @@ function maj_annonce() {
                 $stmt->bindParam(1,$txt);
                 $txt=$_POST["annonce"];
                 $stmt->execute();
-                return  ;              
+                return  ;
             }
             $stmt=$dbh->prepare("INSERT INTO ANNONCE (id,texte) VALUES (1,?)");
             $stmt->bindParam(1,$txt);

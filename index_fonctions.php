@@ -20,7 +20,6 @@ function envoie_mail_inscription($nom,$target,$creneau_demandes) {
     $mail->CharSet = PHPMailer::CHARSET_UTF8;
     $mail->setFrom($mail_from, $mail_fromName);
     $mail->AddAddress($target);
-    $mail->AddReplyTo('capucine@sandsystem.com');
     $mail->Subject="Demande de pré-inscription au jeu libre en cours";
     $msg= <<<EOD
 Bonjour $nom,
@@ -36,8 +35,7 @@ EOD;
     $msg.="Un email sera envoyé les lundis soirs et les jeudis soir avec les créneaux définitifs et la liste d'attente : ";
     $msg.="le club répartit les demandes en priorisant une séance par personne et plus s'il reste des places disponibles ! ";
     $msg.="Cette règle ne vaut pas pour les personnes s'inscrivant la veille pour le lendemain ou une fois les tableaux définitifs envoyés 😉\n\n";
-    $msg.="Si jamais tu as fait une erreur dans tes choix, préviens nous aussi vite que possible en répondant à cet email, ";
-    $msg.="ou en écrivant à capucine@sandsystem.com\n\n";
+    $msg.="Si jamais tu as fait une erreur dans tes choix, préviens nous aussi vite que possible en répondant à cet email.\n\n";
     $msg.="☀️ Petite nouveauté : un onglet a été ajouté sur la page d'inscription pour que tu saches en temps réel combien ";
     $msg.="de personnes sont inscrites sur le(s) créneau(x) demandé(s) !\n\n";
     $msg.=<<<EOD
