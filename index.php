@@ -15,7 +15,7 @@ require "index_fonctions.php";
 ouvre_bdd();
 if (isset($_POST['nom'])) {
     if (valide_formulaire()) {
-     echo "<p>Votre demande d'inscription a bien été prise en compte et un e-mail vous as été envoyé.<br/><a href='index.php'>Lien de retour à l'accueil</a></p>";
+     echo "<p>Votre demande d'inscription a bien été prise en compte et un e-mail vous a été envoyé.<br/><a href='index.php'>Lien de retour à l'accueil</a></p>";
      die();
     }
 }
@@ -31,12 +31,12 @@ ferme_bdd();
         </ul>
     </nav>
     <h1 class="titre_index">Pré-inscription aux créneaux de jeu libre à Sand System</h1>
-    
+
     <?php echo affiche_annonce(); ?>
     <h4>⚠️ les créneaux demandés ne sont pas automatiquement attribués ! <BR><BR>
 
-Un email sera envoyé les lundis soirs et les jeudis soir avec les créneaux définitifs et la liste d'attente : 
-le club répartit les demandes en priorisant une séance par personne et plus s'il reste des places disponibles ! 
+Un email sera envoyé les lundis soirs et les jeudis soir avec les créneaux définitifs et la liste d'attente :
+le club répartit les demandes en priorisant une séance par personne et plus s'il reste des places disponibles !
 Cette règle ne vaut pas pour les personnes s'inscrivant la veille pour le lendemain ou une fois les tableaux définitifs envoyés 😉</h2>
 
     <form id="le_formulaire_index" class="formulaire_index" method="post" action="index.php">
