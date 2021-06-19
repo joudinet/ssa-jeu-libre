@@ -24,12 +24,8 @@ function lire_annonce() {
 function affiche_annonce() {
     global $annonce;
     if (!$annonce==[]) {
-        echo "<h3>";
-        foreach ($annonce as $ligne) {
-            echo secu_ecran($ligne);
-            echo "<BR>";
-        }
-        echo "</h3>";
+        $str = '<p>' . implode("<br>", $annonce) . '</p>';
+        print_r($str);
     }
 }
 
