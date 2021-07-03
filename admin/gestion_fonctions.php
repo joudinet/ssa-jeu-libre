@@ -12,6 +12,55 @@ require '../PHPMailer/src/SMTP.php';
 require '../PHPMailer/src/Exception.php';
 require('fpdf.php'); // pour le PDF
 
+function ajout_staff() {
+    global $dbh, $mail_from, $mail_fromName;
+    try {
+        $stmt=$dbh->prepare('SELECT MAX(id) as id FROM STAFF');
+        $stmt->execute();
+        $nouvel_id=1;
+        while ($row=$stmt->fetch()) {
+            $nouvel_id=intval($row['id'])+1;
+        }
+        $stmt=$dbh->prepare('INSERT INTO STAFF (id,nom,mail,password) VALUES (?,?,?,?)');
+        $stmt->bindParam(1, $nouvel_id);
+        $stmt->bindParam(2, $nom);
+        $stmt->bindParam(3, $mail);
+        $stmt->bindParam(4, $password);
+        $nom=$_POST['nom'];
+        $mail=$_POST['mail'];
+        $password="a faire"; //pour une future gestion autre que htpasswd
+        $stmt->execute();
+        $lines = file('../staff/.htpasswd');
+        $contenu="";
+        foreach ($lines as $line_num => $line) {
+	        $contenu=$contenu.$line;
+        }
+        $new_staff=$nom.":".@password_hash("staff", PASSWORD_DEFAULT)."\n";
+        $contenu=$contenu.$new_staff;
+        $h = fopen('../staff/.htpasswd', "w");
+        fwrite($h, $contenu);
+        fclose($h);
+        $mail = new PHPmailer();
+        $mail->CharSet = 'UTF-8';
+        $mail->setFrom($mail_from, $mail_fromName);
+        $mail->ContentType = 'text/plain';
+        $mail->Subject='Bienvenue dans le staff jeu-libre';
+        $msg="Bonjour ".$nom."\n\nTu es maintenant dans la liste des personnes aidant à gérer les créneaux jeu-libre de Sand System et nous t'en remercions !\n ";
+        $msg.="\nPour t'inscrire sur les créneaux de gestion, il suffit de suivre le lien suivant : https://sandsystem.com/jeu-libre/staff\n\n";
+        $msg.="Ton login pour cette partie du site est : ".$nom."     et ton mot de passe est : staff\n\n";
+        $msg.="--\nL'équipe SSA";
+        $mail->Body=$msg;
+        $mail->AddAddress('jerome.99@hotmail.fr');
+        $mail->AddReplyTo('capucine@sandsystem.com');
+        echo "<BR> Le mail qui sera envoyé : <BR><TEXTAREA style='width: 80%;heigth : 200px;text-align : left;'>".$msg."</TEXTAREA>";
+        //if (!$mail->send()) {
+        //    echo 'Mailer error: ' . $mail->ErrorInfo;
+        //}
+        $mail->SmtpClose();
+        unset($mail); 
+    } catch (Exception $e) { echo "erreur dans la création du staffeur";die();}
+}
+
 function annuleterrain($idcreneau) {
     global $dbh, $mail_from, $mail_fromName;
     $terrain_nouveau=$_POST['texte'];
@@ -57,22 +106,21 @@ Nous devons annuler ce créneau mais ce n'est que partie remise!
 -- 
 L'équipe SSA
 EOD;
-// 'fix quote highlighting
             $mail->Body=$msg;
             $mail->AddAddress($mail_from);
-           foreach ($liste_mail as $target) {
+            foreach ($liste_mail as $target) {
                 $mail->AddBCC($target);
             }
             if (!$mail->send()) {
                 echo 'Mailer error: ' . $mail->ErrorInfo;
             }
             $mail->SmtpClose();
-            unset($mail);
+            unset($mail); 
         }
     } catch (Exception $e) {
         echo "Erreur dans l'annulation de terrain";
     }
-
+    
 }
 
 function creationpdf($les_creneaux_demandes) {
@@ -170,7 +218,7 @@ function creationenvoi($les_creneaux_demandes) {
     $mail->ContentType = 'text/plain';
     $mail->Subject='Créneaux de jeu libre';
     $mail->Body= <<<EOD
-Hello les beacheurs, 😎
+Hello les beacheurs, 😎 
 
 Vous trouverez en pièce-jointe le planning pour les jours à venir.
 
@@ -178,7 +226,7 @@ En cas d'annulation, merci de prévenir le plus tôt possible en répondant à c
 
 Pour rappel, toute personne n'ayant pas annulé sa réservation au plus tard la veille du créneau (sauf cas extrême) se verra refuser l'accès au site pour la semaine suivante.
 
-À bientôt sur les terrains, 😊
+À bientôt sur les terrains, 😊 
 -- 
 L'équipe SSA
 EOD;
@@ -336,7 +384,7 @@ function envoie_mail($prenom,$target,$type_mail,$textecreneau) { // type_mail : 
         //echo 'Mailer Error: ' . $mail->ErrorInfo;
         $mail->SmtpClose();
         unset($mail);
-        return false;
+        return false; 
     }
     //echo "<BR> Le mail qui sera envoyé : <BR><TEXTAREA style='width: 80%;heigth : 50px;text-align : left;'>".$msg."</TEXTAREA>";
     $mail->SmtpClose();
@@ -579,22 +627,30 @@ function creationCreneau() {
         while ($row=$res->fetch()) {
             $id=1+intval($row[0]);
         }
-        $stmt = $dbh->prepare("INSERT INTO CRENEAUX VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,0,0,0,0,0,0,0,0,8,8,8,8,2,2,2,2)");
+        $stmt = $dbh->prepare("INSERT INTO CRENEAUX VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,0,0,0,0,0,0,0,0,8,8,8,8,2,2,2,2)");
         $stmt->bindParam(1, $id);
         $stmt->bindParam(2, $date);
         $stmt->bindParam(3, $heure);
-        $stmt->bindParam(4, $feminin);
-        $stmt->bindParam(5, $mixte);
-        $stmt->bindParam(6, $masculin);
-        $stmt->bindParam(7, $t1);
-        $stmt->bindParam(8, $t2);
-        $stmt->bindParam(9, $t3);
-        $stmt->bindParam(10, $t4);
-        $stmt->bindParam(11, $c1);
-        $stmt->bindParam(12, $c2);
-        $stmt->bindParam(13, $c3);
-        $stmt->bindParam(14, $c4);
+        $stmt->bindParam(4, $reservation);
+        $stmt->bindParam(5, $nbstaff);
+        $stmt->bindParam(6, $feminin);
+        $stmt->bindParam(7, $mixte);
+        $stmt->bindParam(8, $masculin);
+        $stmt->bindParam(9, $t1);
+        $stmt->bindParam(10, $t2);
+        $stmt->bindParam(11, $t3);
+        $stmt->bindParam(12, $t4);
+        $stmt->bindParam(13, $c1);
+        $stmt->bindParam(14, $c2);
+        $stmt->bindParam(15, $c3);
+        $stmt->bindParam(16, $c4);
         $date=secu_bdd($_POST['date']);
+        $nbstaff=0;
+        if (isset($_POST['reservation']) && $_POST['reservation']=="oui") {
+            $reservation="oui";
+        } else {
+            $reservation="non";
+        }
         if ($date<date('Y-m-d')) { echo "on ne créé pas de créneaux dans le passé ;)"; return ; }
         $heure=secu_bdd($_POST['heure']);
         if (isset($_POST['T1']) &&  in_array($_POST['T1'],$terrainpossible) ) { // && isset($_POST['C1']) && in_array($_POST['C4'],$couleurpossible)) {
@@ -675,7 +731,7 @@ function maj_annonce() {
                 $stmt->bindParam(1,$txt);
                 $txt=$_POST["annonce"];
                 $stmt->execute();
-                return  ;
+                return  ;              
             }
             $stmt=$dbh->prepare("INSERT INTO ANNONCE (id,texte) VALUES (1,?)");
             $stmt->bindParam(1,$txt);

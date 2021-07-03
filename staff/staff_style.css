@@ -1,6 +1,34 @@
-*{
+body{
+  background-color : #6fb8b9;
   font-family: Avenir, sans-serif;
   text-align : center;
+}
+
+nav.menu {
+    background-color: rgb(38, 135, 201);
+}
+
+.menu ul {
+    display: flex;
+    list-style: none;
+}
+
+.menu li {
+    padding: 5px 10px;
+}
+
+.menu li a {
+    color: white;
+    text-decoration: none;
+}
+
+.menu li a:hover {
+    color: rgb(250, 179, 21);
+}
+
+.creneauvide {
+    color : white;
+    background-color : red;
 }
 
 .close {
@@ -124,6 +152,33 @@
     padding : 0px;
 }
 
+div.creneaux_index {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    margin-top : 20px;
+}
+
+div.creneaux_index_staff {
+    display: grid;
+    grid-template-columns: auto auto;
+    margin-top : 20px;
+}
+
+input[type="checkbox"],input[type="radio"] {
+    display : none;
+}
+
+label.round {  /* les labels des checkbox/radios */
+     border : 1px solid black;
+     padding : 5px 10px;
+     margin : 5px;
+     border-radius : 15px;
+     line-height: calc(22px + 1em);
+     background-color : #2687c9;
+     text-align : center;
+     color : white;
+     cursor : pointer;
+ }
 
 
 .creationCreneau {
@@ -222,3 +277,9 @@ padding:8px 0;
 #menu li:hover a{
 color:#000;
 }
+
+/*@media screen and (max-device-width : 902px), (max-width : 902px){
+label.round {
+    padding-top : 200px;
+}
+}*/

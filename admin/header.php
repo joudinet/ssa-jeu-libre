@@ -15,7 +15,7 @@ require "gestion_fonctions.php";
 
 <BODY><BR>
 <ul id="menu">
-    <li><a href="gestionannonce.php">Gestion des annonces</a></li>
+    <li><a href="gestion.php">Gestion</a></li>
     <li><a href="creationcreneaux.php">Création de créneaux</a></li>
     <li><a href="modifcreneaux.php">Modification/suppression de créneaux</a></li>
     <li><a href="validationdemandes.php">Validation des demandes</a></li>

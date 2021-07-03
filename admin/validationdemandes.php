@@ -200,10 +200,12 @@ ferme_bdd();
     <FORM id="Formulaire" method="post" action="validationdemandes.php">
 <?php
     foreach ($les_creneaux as $un_creneau) {
+        if ($un_creneau['reservation']=="oui") {
         $id=$un_creneau['id'];
         echo '<DIV><INPUT type="checkbox" name="creneau[]" id="c'.$id.'" value="'.$id.'"';
         if (isset($_POST['creneau']) && in_array($id,$les_creneaux_demandes)) { echo ' checked';}
         echo '> <LABEL for="c'.$id.'"> '.secu_ecran(jolie_date($un_creneau['date'])).', '.secu_ecran($un_creneau['heure']).'</LABEL></DIV>';
+        }
     }
 ?>
     <input hidden id="inputid" name="inputid" value="1">
