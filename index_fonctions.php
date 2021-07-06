@@ -80,27 +80,27 @@ function test_nom($nom,$prenom,$stmt) {
 function valide_formulaire () { // non utilisé : renvoie true/false si c'est réussi/non réussi
     global $dbh, $captcha_secretKey;
 
-    if (isset($_POST['nom']) && isset($_POST['prenom']) && isset($_POST['mail']) && isset($_POST['telephone']) && isset($_POST['commentaire'])) {
-        if ($_POST['nom']=="" ||$_POST['prenom']=="" ||$_POST['mail']=="" ||$_POST['telephone']=="") {
+    if (isset($_POST['nom']) && isset($_POST['prenom']) && isset($_POST['mail'])) { // && isset($_POST['telephone']) && isset($_POST['commentaire'])) {
+        if ($_POST['nom']=="" ||$_POST['prenom']=="" ||$_POST['mail']=="") { // ||$_POST['telephone']=="") {
             echo "Formulaire incomplet";
             return false;
         }
-        if (!isset($_POST['consignesecurite'])) {
-            echo "Il faut valider les consignes de sécurité pour pouvoir demander un créneau. ";
-            return false;
-        }
+        //if (!isset($_POST['consignesecurite'])) {
+        //    echo "Il faut valider les consignes de sécurité pour pouvoir demander un créneau. ";
+        //    return false;
+        //}
         if (!isset($_POST['consignergpd'])) {
             echo "Il faut autoriser Sand System à sauvegarder les données personnelles pour pouvoir demander un créneau. ";
             return false;
         }
-        if (!isset($_POST['adherent'])) {
-            echo "Il faut indiquer si tu es adhérent SandSystem ou non. ";
-            return false;
-        }
-        if (!isset($_POST['niveau'])) {
-            echo "Il faut indiquer un niveau de jeu. ";
-            return false;
-        }
+        //if (!isset($_POST['adherent'])) {
+        //    echo "Il faut indiquer si tu es adhérent SandSystem ou non. ";
+        //    return false;
+        //}
+        //if (!isset($_POST['niveau'])) {
+        //    echo "Il faut indiquer un niveau de jeu. ";
+        //    return false;
+        //}
         $captcha='';
         if (isset($_POST['g-recaptcha-response'])) {
             $captcha=$_POST['g-recaptcha-response'];
@@ -173,18 +173,18 @@ function valide_formulaire () { // non utilisé : renvoie true/false si c'est r�
             $nom=secu_bdd($_POST['nom']);
             $prenom=secu_bdd($_POST['prenom']);
             $mail=secu_bdd($_POST['mail']);
-            $telephone=secu_bdd($_POST['telephone']);
-            $niveau=secu_bdd($_POST['niveau']);
-            if (!in_array($niveau,["debutant","intermediaire","confirme","expert"])) {
-                echo "Il faut indiquer un niveau de jeu. ";
-                return false;
-            }
-            $adherent=secu_bdd($_POST['adherent']);
-            if (!in_array($adherent,["oui","non"])) {
-                echo "Il faut indiquer si tu êtes adhérent SandSystem ou non. ";
-                return false;
-            }
-            $commentaire=secu_bdd($_POST['commentaire']);
+            $telephone=""; //secu_bdd($_POST['telephone']);
+            $niveau=""; //secu_bdd($_POST['niveau']);
+            //if (!in_array($niveau,["debutant","intermediaire","confirme","expert"])) {
+            //    echo "Il faut indiquer un niveau de jeu. ";
+            //    return false;
+            //}
+            $adherent=""; //secu_bdd($_POST['adherent']);
+            //if (!in_array($adherent,["oui","non"])) {
+            //    echo "Il faut indiquer si tu êtes adhérent SandSystem ou non. ";
+            //    return false;
+            //}
+            $commentaire=""; //secu_bdd($_POST['commentaire']);
             $les_creneaux=lire_les_creneaux();
             $creneau_demandes=[];
             foreach ($les_creneaux as $uncreneau) {

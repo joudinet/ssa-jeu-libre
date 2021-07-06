@@ -129,6 +129,18 @@ label.round {  /* les labels des checkbox/radios */
      color : white;
      cursor : pointer;
  }
+ 
+div.round {  /* les labels des checkbox/radios */
+     display : inline;
+     border : 1px solid black;
+     padding : 5px 10px;
+     margin : 5px;
+     border-radius : 15px;
+     line-height: calc(22px + 1em);
+     background-color : #2687c9;
+     text-align : center;
+     color : white;
+ }
 
 button {   /* bouton validation formulaire */
     display: block;

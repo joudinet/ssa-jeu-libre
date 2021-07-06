@@ -21,6 +21,13 @@ ferme_bdd();
                     <INPUT id="heure" name="heure">
                 </DIV>
                 <DIV class="item_formulaire_index">
+                    <LABEL> Avec réservation ? : </LABEL>
+                    <SELECT id="reservation" name="reservation">
+                        <OPTION value="non" selected > non</OPTION>
+                        <OPTION value="oui"> oui</OPTION>
+                    </SELECT>
+                </DIV>
+                <DIV class="item_formulaire_index">
                     <LABEL> Terrain 1 : </LABEL>
                     <SELECT id="T1" name="T1">
                         <OPTION value="reserve" selected> réservé</OPTION>

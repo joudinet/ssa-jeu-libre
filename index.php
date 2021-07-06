@@ -26,18 +26,13 @@ ferme_bdd();
 <body>
     <nav class="menu">
         <ul>
-             <li><a href="#">Demande de pré-inscription</a></li><!-- ' -->
+             <li><a href="#">Inscription aux créneaux</a></li><!-- ' -->
              <li><a href="inscrits.php">Occupation des terrains</a></li>
         </ul>
     </nav>
-    <h1 class="titre_index">Pré-inscription aux créneaux de jeu libre à Sand System</h1>
-
+    <h1 class="titre_index">Gestion des créneaux de jeu libre à Sand System</h1>
+    
     <?php echo affiche_annonce(); ?>
-    <h4>⚠️ les créneaux demandés ne sont pas automatiquement attribués ! <BR><BR>
-
-Un email sera envoyé les lundis soirs et les jeudis soir avec les créneaux définitifs et la liste d'attente :
-le club répartit les demandes en priorisant une séance par personne et plus s'il reste des places disponibles !
-Cette règle ne vaut pas pour les personnes s'inscrivant la veille pour le lendemain ou une fois les tableaux définitifs envoyés 😉</h2>
 
     <form id="le_formulaire_index" class="formulaire_index" method="post" action="index.php">
         <fieldset>
@@ -49,11 +44,11 @@ Cette règle ne vaut pas pour les personnes s'inscrivant la veille pour le lende
             <input id="prenom" name="prenom" />
             <label for="mail">Mail</label>
             <input type="email" id="mail" name="mail" />
-            <label for="telephone">Téléphone</label>
-            <input id="telephone" name="telephone" type="tel" />
+<!--            <label for="telephone">Téléphone</label>
+            <input id="telephone" name="telephone" type="tel" /> -->
         </div>
         </fieldset>
-        <fieldset>
+<!--        <fieldset>
             <legend>Niveau de jeu estimé :</legend>
             <input type="radio" name="niveau" value="debutant" id="jeu1" />
             <label id="jeul1" for="jeu1" class="round">débutant</label>
@@ -79,7 +74,7 @@ Cette règle ne vaut pas pour les personnes s'inscrivant la veille pour le lende
         <fieldset>
             <legend>Partenaires</legend>
             <textarea name="commentaire" placeholder="Partenaire(s) souhaité(s) - Si tu as une remarque et/ou une question, c'est ici aussi !"></textarea>
-        </fieldset>
+        </fieldset>-->
     <fieldset class="creneaux_index" id="creneauxdispos">
         <legend>Liste des créneaux disponibles : (créneaux sélectionnés en orange)</legend>
     <div class="creneaux_index">
@@ -89,23 +84,29 @@ foreach ($les_creneaux as $un_creneau) {
     $id = $un_creneau['id'];
     echo '<div>'.secu_ecran(jolie_date($un_creneau['date'])).' '.secu_ecran($un_creneau['heure']).' :</div>';
     echo '<div>';
-    if ($un_creneau['feminin']>0) {
-        $no_creneau = false;
-        echo '<input class="checkboxfeminin" type="checkbox" id="c'.$id.'feminin" name="c'.$id.'feminin" onclick="click_creneau('.$id.',0)" value=0 />';
-        echo '<label id="lc'.$id.'feminin" for="c'.$id.'feminin" class="round">féminin</label>';
-    }
-    if ($un_creneau['masculin']>0) {
-        $no_creneau = false;
-        echo '<input class="checkboxmasculin" type="checkbox" id="c'.$id.'masculin" name="c'.$id.'masculin" onclick="click_creneau('.$id.',1)" value=0 />';
-        echo '<label id="lc'.$id.'masculin" for="c'.$id.'masculin" class="round">masculin</label>';
-    }
-    if ($un_creneau['mixte']>0) {
-        $no_creneau = false;
-        echo '<input class="checkboxmixte" form="le_formulaire_index" type="checkbox" id="c'.$id.'mixte" name="c'.$id.'mixte" onclick="click_creneau('.$id.',2)" value=0 />';
-        echo '<label id="lc'.$id.'mixte" for="c'.$id.'mixte" class="round">mixte</label>';
-    }
-    if ($no_creneau) {
-        echo "Aucun créneau disponible.";
+    if ($un_creneau['nbstaff']=="0") {
+        echo "<div > pas assez de staff pour l'instant</div>";
+    } elseif ($un_creneau['reservation']=="oui") {
+        if ($un_creneau['feminin']>0) {
+            $no_creneau = false;
+            echo '<input class="checkboxfeminin" type="checkbox" id="c'.$id.'feminin" name="c'.$id.'feminin" onclick="click_creneau('.$id.',0)" value=0 />';
+            echo '<label id="lc'.$id.'feminin" for="c'.$id.'feminin" class="round">féminin</label>';
+        }
+        if ($un_creneau['masculin']>0) {
+            $no_creneau = false;
+            echo '<input class="checkboxmasculin" type="checkbox" id="c'.$id.'masculin" name="c'.$id.'masculin" onclick="click_creneau('.$id.',1)" value=0 />';
+            echo '<label id="lc'.$id.'masculin" for="c'.$id.'masculin" class="round">masculin</label>';
+        }
+        if ($un_creneau['mixte']>0) {
+            $no_creneau = false;
+            echo '<input class="checkboxmixte" form="le_formulaire_index" type="checkbox" id="c'.$id.'mixte" name="c'.$id.'mixte" onclick="click_creneau('.$id.',2)" value=0 />';
+            echo '<label id="lc'.$id.'mixte" for="c'.$id.'mixte" class="round">mixte</label>';
+        }
+        if ($no_creneau) {
+            echo "Aucun créneau disponible.";
+        }
+    } else {
+        echo "<div class='round'>sans réservation</div>"; 
     }
     echo '</div>';
 }
@@ -115,12 +116,12 @@ foreach ($les_creneaux as $un_creneau) {
     </fieldset>
 
     <footer>
-    <div>
+ <!--   <div>
         <input type="checkbox" id="consignesecurite" name="consignesecurite" class="texteconsigne">
         <label for="consignesecurite" class="texteconsigne">
             Je confirme avoir pris connaissance du <a href=" https://drive.google.com/file/d/12l7dqbU4wu52WcvrWphWyRbwFPnm-2qz/view?usp=sharing">protocole de jeu</a> pour une reprise responsable. J'en accepte les termes et les conditions. Je m'engage à le respecter.
         </label>
-    </div>
+    </div> -->
     <div>
          <input type="checkbox" id="consignergpd" name="consignergpd" class="texteconsigne">
          <label for="consignergpd" class="textergpd">

@@ -23,7 +23,7 @@ let telephone=document.getElementById("telephone")
 
 window.onload = function () {
     leschecked()
-    lesradio()
+    //lesradio()
 }
 
 function test_feminin() {
@@ -79,13 +79,13 @@ function leschecked() {
     }
 }
 
-jeu1.onclick= function () {lesradio()}
+//jeu1.onclick= function () {lesradio()}
 
-jeu2.onclick= function () {lesradio()}
+//jeu2.onclick= function () {lesradio()}
 
-jeu3.onclick= function () {lesradio()}
+//jeu3.onclick= function () {lesradio()}
 
-jeu4.onclick= function () {lesradio()}
+//jeu4.onclick= function () {lesradio()}
 
 ad1.onclick= function () {lesradio() ; pour_adherent();}
 
@@ -123,14 +123,14 @@ function nbCreneauChecked() {
 }
 
 function validation_formulaire() {
-    if (nom.value=="" || prenom.value=="" || telephone.value=="" || mail.value=="") {
+    if (nom.value=="" || prenom.value=="" ||  mail.value=="") {  // telephone.value=="" ||
 	alert('Le formulaire est incomplet')
 	return
     }
-    if (!consignesecurite.checked) {
-	alert('Il faut penser à valider les consignes de sécurité !')
-	return
-    }
+    //if (!consignesecurite.checked) {
+	//alert('Il faut penser à valider les consignes de sécurité !')
+	//return
+    //}
     if (!consignergpd.checked) {
 	alert('Il faut autoriser Sand System à sauvegarder les données !')
 	return
@@ -144,17 +144,17 @@ function validation_formulaire() {
     for (i=0;i<adherent.length;i++) {
 	bouton_adherent=bouton_adherent || adherent[i].checked
     }
-    if (!bouton_adherent) {
-	alert('Il faut indiquer si tu es adhérent SandSystem')
-	return
-    }
+    //if (!bouton_adherent) {
+	//alert('Il faut indiquer si tu es adhérent SandSystem')
+	//return
+    //}
     bouton_niveau=false
     for (i=0;i<niveau.length;i++) {
 	 bouton_niveau=bouton_niveau || niveau[i].checked
     }
-    if (!bouton_niveau) {
-	alert('Il faut indiquer quel est ton niveau')
-	return
-    }
+    //if (!bouton_niveau) {
+	//alert('Il faut indiquer quel est ton niveau')
+	//return
+    //}
     LeFormulaire.submit()
 }
