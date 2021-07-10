@@ -1,0 +1,9 @@
+ErrorDocument 401 default
+
+
+AuthName "Entrez vos identifiants"
+AuthType Basic
+AuthUserFile "C:\xampp\htdocs\ssa-jeu-libre\staff\.htpasswd"
+Require valid-user
+
+Options -Indexes

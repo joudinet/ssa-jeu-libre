@@ -1,4 +1,56 @@
+let footer=document.getElementById("footer")
+let infoindex=document.getElementById("infoIndex")
 let LeFormulaire=document.getElementById("le_formulaire_index")
+
+window.onload = function () {
+    if (leschecked()) {
+        footer.style.display="block"
+        infoindex.style.display="block"
+    }
+}
+
+function leschecked() {
+    au_moins_un=false
+    tabinput=document.getElementById('creneauxdispos').getElementsByTagName("input")
+    tablabel=document.getElementById('creneauxdispos').getElementsByTagName("label")
+    for (i=0;i<tabinput.length;i++) {
+	    if (tabinput[i].checked) {
+	        tablabel[i].style.backgroundColor="#FAB315"
+	        tablabel[i].style.color="black"
+            au_moins_un=true
+	    } else {
+	        tablabel[i].style.backgroundColor="#2687c9"
+	        tablabel[i].style.color="white"
+	    }
+    }
+    return au_moins_un
+}
+
+function click_creneau(id) {
+    if (leschecked()) {
+        footer.style.display="block"
+        infoindex.style.display="block"
+    } else {
+        footer.style.display="none"
+        infoindex.style.display="none"
+    }
+}
+
+function validation_formulaire() {
+    if (nom.value=="" || prenom.value=="" ||  mail.value=="") {  // telephone.value=="" ||
+	alert('Le formulaire est incomplet')
+	return
+    }
+    if (!consignergpd.checked) {
+	alert('Il faut autoriser Sand System à sauvegarder les données !')
+	return
+    }
+    LeFormulaire.submit()
+}
+
+
+
+/*let LeFormulaire=document.getElementById("le_formulaire_index")
 let consignesecurite=document.getElementById("consignesecurite")
 let consignergpd=document.getElementById("consignergpd")
 let adherent=document.getElementsByName("adherent")
@@ -21,10 +73,7 @@ let prenom=document.getElementById("prenom")
 let mail=document.getElementById("mail")
 let telephone=document.getElementById("telephone")
 
-window.onload = function () {
-    leschecked()
-    //lesradio()
-}
+
 
 function test_feminin() {
     tab=document.getElementsByClassName("checkboxfeminin")
@@ -157,4 +206,4 @@ function validation_formulaire() {
 	//return
     //}
     LeFormulaire.submit()
-}
+}*/

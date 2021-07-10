@@ -22,12 +22,12 @@ function envoie_mail_creneaux_vides($creneaux_vides) {
             $msg.=jolie_date($lecreneau['date']).' '.$lecreneau['heure']."\n";
         }
         $mail->Body=$msg;
-        $mail->AddAddress('jerome.99@hotmail.fr');
-        $mail->AddReplyTo('capucine@sandsystem.com');
-        echo "<BR> Le mail qui sera envoyé : <BR><TEXTAREA style='width: 80%;heigth : 50px;text-align : left;'>".$msg."</TEXTAREA>";
-        //if (!$mail->send()) {
-        //    echo 'Mailer error: ' . $mail->ErrorInfo;
-        //}
+        $mail->AddAddress($mail_from);
+        $mail->AddAddress('ca@sandsystem.com')
+        //echo "<BR> Le mail qui sera envoyé : <BR><TEXTAREA style='width: 80%;heigth : 50px;text-align : left;'>".$msg."</TEXTAREA>";
+        if (!$mail->send()) {
+            echo 'Mailer error: ' . $mail->ErrorInfo;
+        }
         $mail->SmtpClose();
         unset($mail); 
     } catch (Exception $e) {
@@ -39,7 +39,6 @@ function envoie_mail_creneaux_vides($creneaux_vides) {
 function lire_les_creneaux_staffeur($staffeur) { // liste les créneaux gérés par le staffeur
     global $dbh;
     try {
-        $date=date('Y-m-d');
         $stmt=$dbh->prepare('SELECT * FROM GESTIONCRENEAUX JOIN STAFF ON idstaff=id WHERE nom=?');
         $stmt->bindParam(1,$staffeur);
         $stmt->execute();

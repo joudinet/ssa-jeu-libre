@@ -7,6 +7,15 @@
     text-align : left;
 }
 
+.les_inscrits {
+    display : grid;
+    grid-template-columns: 40% 60%;
+}
+
+.les_inscrits >div:nth-child(even) {
+    text-align: left;
+}
+
 .close {
   color: #aaaaaa;
   float: right;
@@ -79,10 +88,13 @@
   border-radius: 12px;    
 }
 
+button,.bouton {
+    cursor : pointer ;
+}
 
 .modifcreneau {
     display : grid;
-    grid-template-columns : 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns : 1fr 1fr 1fr 1fr;
     width : 90%;
     border : 1px solid black;
 }
@@ -144,7 +156,7 @@
 
 .grillecreneau {
     display : grid;
-    grid-template-columns : 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns : 1fr 1fr 1fr 1fr;
     width : 90%;
 }
 
@@ -225,4 +237,21 @@ padding:8px 0;
 }
 #menu li:hover a{
 color:#000;
+}
+
+.bouton {
+    margin : 15px;
+}
+
+@media screen and (max-device-width : 902px), (max-width : 902px){
+
+    .perso {
+        display : grid;
+        grid-template-columns : 40% 60%
+    }
+    
+    .modifcreneau {
+        grid-template-columns :  1fr 1fr;
+    }
+
 }

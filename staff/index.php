@@ -1,16 +1,6 @@
-<!DOCTYPE html>
-
-<html>
-<head>
-    <meta http-equiv=content-type content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestion des créneaux</title>
-    <link rel="stylesheet" href="staff_style.css?=<?php echo time(); //pour forcer le css a ne pas être en cache et jouer des tours en dev ?>">
-    <script src="staff_java.js?=<?php echo time(); //pour forcer le js a ne pas être en cache et jouer des tours en dev ?>" defer></script>
-</head>
 
 <?php
-require "staff_fonctions.php";
+require "header.php";
 ouvre_bdd();
 $les_creneaux=lire_les_creneaux();
 $staffeur=$_SERVER['PHP_AUTH_USER'];
@@ -24,13 +14,6 @@ $les_creneaux_du_staffeur=lire_les_creneaux_staffeur($staffeur);
 ferme_bdd();
 ?>
     
-<body>    
-    <nav class="menu">
-        <ul>
-             <li><a href="#">Inscription gestion</a></li><!-- ' -->
-             <li><a href="gestion.php">Récapitulatif</a></li>
-        </ul>
-    </nav>
 <BR><BR>
     <form id="le_formulaire_index" class="formulaire_index" method="post" action="index.php">
         <input type="hidden" name="validation" value="">
@@ -52,25 +35,27 @@ foreach ($les_creneaux as $un_creneau) {
     echo $nbstaff." personne(s)";
     echo '</div>';
     echo '<div>';
-        echo '<input class="checkboxfeminin" type="checkbox" id="c'.$id.'" name="c'.$id.'" onclick="click_creneau('.$id.')" value=0 />';
-        echo '<label id="lc'.$id.'" for="c'.$id.'" class="round">Gérer ce créneau</label>';
+        echo '<input class="checkboxfeminin" type="checkbox" id="c'.$id.'" name="c'.$id.'" onclick="click_creneau('.$id.')" value='.$id.' />';
+        echo '<label id="cl'.$id.'" for="c'.$id.'" class="round">Absent(e)</label>';
     echo '</div>';
 }
 
 ?>
     </div>
     </fieldset><BR>
-    <button type="button" onclick="validation_formulaire()" >Mettre à jour la gestion des créneaux</button>
+    <button type="button" onclick="validation_formulaire()" >Mettre à jour la page de présence</button>
     </form>
     
 </body>
 
+
+<script src="staff_java.js?=<?php echo time(); //pour forcer le js a ne pas être en cache et jouer des tours en dev ?>" ></script>
 <script>
 <?php
-
 foreach ($les_creneaux_du_staffeur as $id) {
     echo "document.getElementById('c".$id."').checked=true\n";
-} 
+    echo "click_creneau(".$id.")\n";
+ } 
 ?>
 </script>
 

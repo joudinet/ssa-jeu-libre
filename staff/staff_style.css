@@ -103,6 +103,20 @@ nav.menu {
   border-radius: 12px;    */
 }
 
+.coordonneesstaff {
+    display : grid;
+    grid-template-columns : 1fr 1fr ;
+}
+
+.coordonneesstaff :nth-child(odd) {
+    text-align : right;
+    margin-right : 5px;
+}
+
+.coordonneesstaff :nth-child(even) {
+    text-align : left;
+    margin-left : 5px;
+}
 
 .modifcreneau {
     display : grid;
@@ -164,6 +178,11 @@ div.creneaux_index_staff {
     margin-top : 20px;
 }
 
+.creneaux_index_staff :nth-child(even) {
+    text-align : left;
+    margin-left : 5px;
+}
+
 input[type="checkbox"],input[type="radio"] {
     display : none;
 }
@@ -180,6 +199,14 @@ label.round {  /* les labels des checkbox/radios */
      cursor : pointer;
  }
 
+ button {
+    border : 1px solid black;
+    padding : 5px 10px;
+    margin : 5px;
+    border-radius : 15px;
+    line-height: calc(22px + 1em);
+    cursor : pointer;
+ }
 
 .creationCreneau {
    margin : 20px;

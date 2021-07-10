@@ -18,7 +18,9 @@ require "gestion_fonctions.php";
     <li><a href="gestion.php">Gestion</a></li>
     <li><a href="creationcreneaux.php">Création de créneaux</a></li>
     <li><a href="modifcreneaux.php">Modification/suppression de créneaux</a></li>
-    <li><a href="validationdemandes.php">Validation des demandes</a></li>
+    <li><a href="heurescreuses.php">Heures creuses</a></li>
+    <li><a href="initialisation.php">Initialisation</a></li>
+ <!--   <li><a href="validationdemandes.php">Validation des demandes</a></li>
     <li><a href="creationpdf.php">Creation de PDF/envoi de Mail</a></li>
-    <li><a href="vieuxcreneaux.php">Vieux créneaux</a></li>
+    <li><a href="vieuxcreneaux.php">Vieux créneaux</a></li> -->
 </ul>
