@@ -1,16 +1,16 @@
 
-<?php
-require "header.php";
+<?php 
+require "header.php"; 
 ouvre_bdd();
 $les_creneaux=lire_les_creneaux();
 $staffeur=$_SERVER['PHP_AUTH_USER'];
-if (pas_un_staffeur($staffeur)) { die(); }
+if (pas_un_staffeur($staffeur)) { echo "pb login"; die(); } 
 $les_creneaux_du_staffeur=lire_les_creneaux_staffeur($staffeur);
 if (isset($_POST['validation'])) {
     met_a_jour_creneau_staff($staffeur);
 }
 $les_creneaux=lire_les_creneaux();
-$les_creneaux_du_staffeur=lire_les_creneaux_staffeur($staffeur);
+$les_creneaux_du_staffeur=lire_les_creneaux_staffeur($staffeur); 
 ferme_bdd();
 ?>
     

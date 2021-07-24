@@ -9,6 +9,7 @@ if (isset($_POST['annonce'])) {
     } elseif ($_POST['but']=="modif") {
         modif_staff();
     } elseif ($_POST['but']=="suppression") {
+        $les_creneaux=lire_les_creneaux();
         supprime_staff();
     }
 }

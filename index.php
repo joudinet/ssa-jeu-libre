@@ -33,6 +33,7 @@ ferme_bdd();
             } elseif ($un_creneau['reservation']=="oui") {
                 echo '<input  type="checkbox" id="c'.$id.'" name="c'.$id.'" onclick="click_creneau('.$id.')" />';
                 echo '<label id="cl'.$id.'" for="c'.$id.'" class="round">ouvert avec inscription</label>'; 
+                echo $un_creneau['nbdemandes']." personne(s)";
             } else {
                 echo "<div class='round'  style='background-color: green;'>créneau ouvert</div>"; 
             }

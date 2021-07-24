@@ -24,11 +24,11 @@ function leschecked() {
 function click_creneau(id) { 
     checkbox=document.getElementById('c'+id.toString())
 	label=document.getElementById('cl'+id.toString())
-	if (checkbox.checked) {
+	if (checkbox.checked) { console.log(id,"checked")
 		label.style.backgroundColor="#FAB315"
 		label.style.color="black"
 		label.innerHTML="Présent(e)";
-	} else {
+	} else { console.log(id,"unchecked")
 		label.style.backgroundColor="#2687c9"
 		label.style.color="white"
 		label.innerHTML="Absent(e)";

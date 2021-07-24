@@ -220,7 +220,7 @@ function remiseazero() {
         $dbh->query($msg);
         $h = fopen('../staff/.htpasswd', "w");
         fwrite($h, "");
-        fclose($h); 
+        fclose($h);
   } catch (Exception $e) {
         echo "Erreur lors de la remise à zéro";
     }
@@ -250,9 +250,23 @@ function SupprimeCreneau() {
 function supprime_demande($id) {
     global $dbh,$les_creneaux;
     try {
+        $stmt=$dbh->prepare("SELECT * FROM DEMANDES WHERE id=?");
+        $stmt->bindParam(1, $id);
+        $stmt->execute();
+        $lademande=$stmt->fetch();
+        $idcreneau=intval($lademande['idcreneau']);
         $stmt = $dbh->prepare("DELETE FROM DEMANDES WHERE id=?");
         $stmt->bindParam(1, $id);
         $stmt->execute();
+        $stmt=$dbh->prepare("SELECT * FROM CRENEAUX WHERE id=?");
+        $stmt->bindParam(1, $idcreneau);
+        $stmt->execute();
+        $row=$stmt->fetch();
+        $nbdemandes=intval($row['nbdemandes'])-1;
+        $stmt=$dbh->prepare("UPDATE CRENEAUX SET nbdemandes=? WHERE id=?");
+        $stmt->bindParam(1, $nbdemandes);
+        $stmt->bindParam(2, $idcreneau);
+        $stmt->execute();        
     } catch (Exception $e) {
         echo "Erreur dans la suppression de la demande du joueur";
     }
@@ -266,6 +280,32 @@ function supprime_staff() {
         $stmt = $dbh->prepare("DELETE FROM STAFF WHERE id=?");
         $stmt->bindParam(1,$id);
         $stmt->execute();
+        $stmt = $dbh->prepare("SELECT * FROM GESTIONCRENEAUX WHERE idstaff=?");
+        $stmt->bindParam(1,$id);
+        $stmt->execute();
+        $stmt3=$dbh->prepare('SELECT nbstaff FROM CRENEAUX WHERE id=?');
+        $stmt3->bindParam(1,$idcreneau);
+        $stmt4=$dbh->prepare('UPDATE CRENEAUX SET nbstaff=? WHERE id=?');
+        $stmt4->bindParam(1,$nbstaff);
+        $stmt4->bindParam(2,$idcreneau);
+        $creneauxvides=[];
+        while ($row=$stmt->fetch()) {
+            $idcreneau=intval($row['idcreneau']);
+            $stmt3->execute();
+            $row3=$stmt3->fetch();
+            $nbstaff=intval($row3['nbstaff'])-1;
+            $stmt4->execute();
+            if ($nbstaff==0) {
+                array_push($creneauxvides,$idcreneau);
+            }
+        }
+        if ($creneauxvides!=[]) {
+            echo "<BR><BR> Attention, les créneaux suivants n'ont plus de staff après cette suppression :";
+            foreach ($creneauxvides as $uncreneau) {
+                $lecreneau=trouveCreneau($uncreneau);
+                echo "<BR>".jolie_date($lecreneau['date']).' '.$lecreneau['heure'];;
+            }
+        }
         $stmt = $dbh->prepare("DELETE FROM GESTIONCRENEAUX WHERE idstaff=?");
         $stmt->bindParam(1,$id);
         $stmt->execute();
@@ -307,6 +347,17 @@ function supprime_tout_staff() {
         echo "Erreur dans la suppression de tous les membres du staff";
     }      
    
+}
+
+function trouveCreneau($id) { // renvoie la ligne de $liste_creneau associé au creneau défini par son id
+    global $les_creneaux;
+    foreach ($les_creneaux as $uncreneau) {
+        if ($uncreneau['id']==$id) {
+            return $uncreneau;
+        }
+    }
+    echo "erreur dans la base de données des créneaux";
+    die();
 }
 
 /// anciennes fonctions à partir d'ici
@@ -961,17 +1012,6 @@ function reinitialise_creneau($id) { // remets tout le monde en attente en fait
         echo "Erreur dans la reinitialisation du créneau";
     }
 
-}
-
-function trouveCreneau($id) { // renvoie la ligne de $liste_creneau associé au creneau défini par son id
-    global $les_creneaux;
-    foreach ($les_creneaux as $uncreneau) {
-        if ($uncreneau['id']==$id) {
-            return $uncreneau;
-        }
-    }
-    echo "erreur dans la base de données des créneaux";
-    die();
 }
 
 function valideavecmail($id) {
