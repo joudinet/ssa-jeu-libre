@@ -22,7 +22,7 @@ function ferme_bdd() {
 }
 
 function jolie_date($date) { // date sous forme  "jour numéro_jour mois " en lettres
-    return strftime('%A %e %B',strtotime($date));
+    return utf8_encode(strftime('%A %e %B',strtotime($date)));
 }
 
 function lire_annonce() {
