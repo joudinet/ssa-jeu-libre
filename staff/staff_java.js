@@ -12,18 +12,27 @@ function leschecked() {
 	    if (tabinput[i].checked) {
 	        tablabel[i].style.backgroundColor="#FAB315"
 	        tablabel[i].style.color="black"
+			tablabel[i].innerHTML="Présent(e)";
 	    } else {
 	        tablabel[i].style.backgroundColor="#2687c9"
 	        tablabel[i].style.color="white"
-	    }
-	    if (screen.width<920) {
-	        tablabel[i].innerHTML="Gérer"
+			tablabel[i].innerHTML="Absent(e)";
 	    }
     }
 }
 
 function click_creneau(id) { 
-    leschecked()
+    checkbox=document.getElementById('c'+id.toString())
+	label=document.getElementById('cl'+id.toString())
+	if (checkbox.checked) { console.log(id,"checked")
+		label.style.backgroundColor="#FAB315"
+		label.style.color="black"
+		label.innerHTML="Présent(e)";
+	} else { console.log(id,"unchecked")
+		label.style.backgroundColor="#2687c9"
+		label.style.color="white"
+		label.innerHTML="Absent(e)";
+	}
  }
  
  function validation_formulaire() {

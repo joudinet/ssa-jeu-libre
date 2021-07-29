@@ -3,6 +3,33 @@ body{
   font-family : inter;
 }
 
+.les_inscrits {
+    display : grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.les_inscrits div:nth-child(odd) {
+    text-align : right;
+    margin : 5px;
+}
+
+.les_inscrits div:nth-child(even) {
+    text-align : left;
+    margin : 5px;
+}
+
+.bgred {
+    background-color: red;
+}
+
+.bggreen {
+    background-color: green;
+}
+
+.pointer {
+    cursor : pointer;
+}
+
 nav.menu {
     background-color: rgb(38, 135, 201);
 }
@@ -48,7 +75,7 @@ h1 {
 
 form {
     display : grid;
-    grid-template-columns : 1fr 1fr;
+    grid-template-columns : 50% 50%;
 }
 
 .perso {
@@ -75,9 +102,9 @@ footer {
 }
 
 fieldset.creneaux_index {
-    grid-column-start: 2;
+    /*grid-column-start: 2;
     grid-row-start: 1;
-    grid-row-end: 5;
+    grid-row-end: 5;*/
     align-self: stretch;
 }
 
@@ -116,6 +143,10 @@ input[type="checkbox"] {
 
 input[type="checkbox"]:not(.texteconsigne):not(.textergpd),input[type="radio"] {
     display : none;
+}
+
+.textergpd {
+    cursor : pointer;
 }
 
 label.round {  /* les labels des checkbox/radios */
@@ -161,15 +192,22 @@ button {   /* bouton validation formulaire */
      margin-bottom : 10px;
  }
 
+
 /***
 *** partie spécifique selon le type d'appareil/la taille de l'écran
 ***/
+
+footer div {
+    margin : 15px;
+}
 
 @media screen and (max-device-width : 902px), (max-width : 902px){
 
 form {
      grid-template-columns : 1fr;
 }
+
+
 footer {
     grid-column-start: auto;
     grid-column-end: auto;
@@ -189,14 +227,14 @@ label.round {  /* les labels des checkbox/radios */
      cursor : pointer;
 }
 
-fieldset.creneaux_index {
+/*fieldset.creneaux_index {
     grid-column-start: auto;
     grid-row-start: auto;
 }
 
 div.creneaux_index {
     grid-template-columns : 1fr;
-}
+}*/
 
 .creneaux_index div:nth-child(odd) {
     margin-top: 0;

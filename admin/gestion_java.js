@@ -1,6 +1,36 @@
+let amodifier=document.getElementById("amodifier")
+let nommodif=document.getElementById("nommodif")
+let mailmodif=document.getElementById("mailmodif")
+let telephonemodif=document.getElementById("telephonemodif")
+let buthidden=document.getElementById("buthidden")
+let FormulaireBis=document.getElementById("FormulaireBis")
 let Formulaire = document.getElementById("Formulaire")
-let but=document.getElementById("but")
 let inputid=document.getElementById("inputid")
+let but=document.getElementById("but")
+
+function ajusteDonneesStaff() {
+    nommodif.value=leStaff[amodifier.value]['nom']
+    mailmodif.value=leStaff[amodifier.value]['mail']
+    telephonemodif.value=leStaff[amodifier.value]['telephone']
+}
+
+function suppression() {
+    buthidden.value="suppression"
+    FormulaireBis.submit()
+}
+
+function supprimeDemande(id) {
+    inputid.value=id
+    but.value="supprime demande"
+    Formulaire.submit()
+}
+
+
+
+
+
+
+
 let texte=document.getElementById("texte")
 let lesinfos=document.getElementById("lesinfos")
 let formulairecache=document.getElementById("formulairecache")

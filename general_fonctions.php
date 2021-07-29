@@ -1,25 +1,11 @@
 <?php
 
-require "config.php";
+error_reporting(E_ALL); // pour activer les erreurs
+ini_set("display_errors", 1);  // à commenter à la fin bien sûr
 
+require "config.php";
 setlocale(LC_TIME, 'fr_FR');   //pour l'affichage des dates
 date_default_timezone_set('Europe/Paris');
-
-
-$terrainpossible=['reserve','feminin','mixte','masculin']; // champs autorisés pour les terrains
-$couleurpossible=["#CBCBCB","#FF0099","#00CCFF","#33FF00"]; // reservé, féminin, mixte, masculin
-$les_couleurs=["feminin"=>"#00CCFF","masculin"=>"#33FF00","mixte"=>"#FF0099","reserve"=>"#CBCBCB"];
-
-
-function lire_annonce() {
-    global $dbh;
-    $stmt=$dbh->query("SELECT * FROM ANNONCE WHERE id=1");
-    while ($row=$stmt->fetch()) {
-        $text=$row["texte"];
-        return explode("\n",$text);
-    }
-    return [];
-}
 
 function affiche_annonce() {
     global $annonce;
@@ -29,8 +15,50 @@ function affiche_annonce() {
     }
 }
 
-function lire_les_creneaux_du_jour() { // renvoie les créneaux du jour classés par ordre chronologique, en vérifiant les données
-    global $dbh,$terrainpossible,$couleurpossible;
+function ferme_bdd() {
+    global $dbh;
+    $dbh=null;
+    return ;
+}
+
+function jolie_date($date) { // date sous forme  "jour numéro_jour mois " en lettres
+    return utf8_encode(strftime('%A %e %B',strtotime($date)));
+}
+
+function lire_annonce() {
+    global $dbh;
+    $stmt=$dbh->query("SELECT * FROM DIVERS WHERE intitule='annonce'");
+    while ($row=$stmt->fetch()) {
+        $text=$row["contenu"];
+        return explode("\n",$text);
+    }
+    return [];
+}
+
+function lire_les_creneaux($vieux=false) { // renvoie les créneaux classés par ordre chronologique
+    global $dbh,$mysql_dbname;
+    try {
+        $date=date('Y-m-d');
+        if ($vieux) {
+            $stmt=$dbh->prepare('SELECT * FROM CRENEAUX WHERE date<? ORDER BY date,heure');
+        } else {
+            $stmt=$dbh->prepare('SELECT * FROM CRENEAUX WHERE date>=? ORDER BY date,heure');
+        } 
+        $stmt->bindParam(1,$date);
+        $stmt->execute();
+        $tab_res=[];
+        while ($row=$stmt->fetch()) {
+            array_push($tab_res,$row);
+        }
+        return $tab_res;
+    } catch (Exception $e) {
+        print "Erreur dans la base de données des créneaux";
+        die();
+    }
+}
+
+function lire_les_creneaux_du_jour() { // renvoie les créneaux du jour classés par ordre chronologique
+    global $dbh;
     try {
         $date=date('Y-m-d');
         $stmt=$dbh->prepare('SELECT * FROM CRENEAUX WHERE date=? ORDER BY heure');
@@ -38,10 +66,6 @@ function lire_les_creneaux_du_jour() { // renvoie les créneaux du jour classés
         $stmt->execute();
         $tab_res=[];
         while ($row=$stmt->fetch()) {
-            if (!in_array($row['C1'],$couleurpossible) || !in_array($row['C2'],$couleurpossible) || !in_array($row['C3'],$couleurpossible) || !in_array($row['C4'],$couleurpossible)) {
-                throw new Exception('erreur');   }
-            if (!in_array($row['T1'],$terrainpossible) || !in_array($row['T2'],$terrainpossible) || !in_array($row['T3'],$terrainpossible) || !in_array($row['T4'],$terrainpossible)) {
-                throw new Exception('erreur');   }
             array_push($tab_res,$row);
         }
         return $tab_res;
@@ -51,34 +75,16 @@ function lire_les_creneaux_du_jour() { // renvoie les créneaux du jour classés
     }
 }
 
-function lire_les_creneaux($vieux=false) { // renvoie les créneaux classés par ordre chronologique, en vérifiant les données
-    global $dbh,$terrainpossible,$couleurpossible;
+function ouvre_bdd() {
+    global $dbh, $mysql_host, $mysql_dbname, $mysql_user, $mysql_pass;
     try {
-        $date=date('Y-m-d');
-        if ($vieux) {
-            $stmt=$dbh->prepare('SELECT * FROM CRENEAUX WHERE date<? ORDER BY date,heure');
-        } else {
-            $stmt=$dbh->prepare('SELECT * FROM CRENEAUX WHERE date>=? ORDER BY date,heure');
-        }
-        $stmt->bindParam(1,$date);
-        $stmt->execute();
-        $tab_res=[];
-        while ($row=$stmt->fetch()) {
-            if (!in_array($row['C1'],$couleurpossible) || !in_array($row['C2'],$couleurpossible) || !in_array($row['C3'],$couleurpossible) || !in_array($row['C4'],$couleurpossible)) {
-                throw new Exception('erreur');   }
-            if (!in_array($row['T1'],$terrainpossible) || !in_array($row['T2'],$terrainpossible) || !in_array($row['T3'],$terrainpossible) || !in_array($row['T4'],$terrainpossible)) {
-                throw new Exception('erreur');   }
-            array_push($tab_res,$row);
-        }
-        return $tab_res;
-    } catch (Exception $e) {
-        print "Erreur dans la base de données des créneaux";
+        $dbh = new PDO('mysql:host=' . $mysql_host . ';dbname=' . $mysql_dbname,
+                       $mysql_user, $mysql_pass);
+    } catch (PDOException $e) {
+        print "Connection error: " . $e->getMessage();
         die();
     }
-}
-
-function jolie_date($date) { // date sous forme  "jour numéro_jour mois " en lettres
-    return strftime('%A %e %B',strtotime($date));
+    return;
 }
 
 function secu_bdd($string) {   // inutile avec requete préparée en utf-8 ?
@@ -94,25 +100,6 @@ function secu_ecran_int($str) { //securise une donnée avant de l'afficher sur l
     $res=intval($str);
     if ($res<1) { die();}
     return $res;
-}
-
-function ouvre_bdd() {
-    global $dbh, $mysql_host, $mysql_dbname, $mysql_user, $mysql_pass;
-
-    try {
-        $dbh = new PDO('mysql:host=' . $mysql_host . ';dbname=' . $mysql_dbname,
-                       $mysql_user, $mysql_pass);
-    } catch (PDOException $e) {
-        print "Connection error: " . $e->getMessage();
-        die();
-    }
-    return;
-}
-
-function ferme_bdd() {
-    global $dbh;
-    $dbh=null;
-    return ;
 }
 
 ?>

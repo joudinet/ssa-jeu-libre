@@ -1,41 +1,46 @@
 <?php
 
-error_reporting(E_ALL); // pour activer les erreurs
-ini_set("display_errors", 1);  // à commenter à la fin bien sûr
-//penser à mettre la base de donénes en utf8 pour être sûr?
-
 require "../general_fonctions.php";
+require('fpdf.php'); // pour le PDF
 use PHPMailer\PHPMailer\PHPMailer; //pour le mail
 use PHPMailer\PHPMailer\SMTP;
 require '../PHPMailer/src/PHPMailer.php';
 require '../PHPMailer/src/SMTP.php';
 require '../PHPMailer/src/Exception.php';
-require('fpdf.php'); // pour le PDF
 
 function ajout_staff() {
     global $dbh, $mail_from, $mail_fromName;
     try {
+        $nom=secu_bdd($_POST['nom']);
+        $mailstaff=secu_bdd($_POST['mail']);
+        $telephone=secu_bdd($_POST['telephone']);
+        $password="a faire"; //pour une future gestion autre que htpasswd
+        $stmt=$dbh->prepare('SELECT * FROM STAFF WHERE nom=?');
+        $stmt->bindParam(1,$nom);
+        $stmt->execute();
+        while ($row=$stmt->fetch()) {
+            echo "<BR> <div style='color : red;'>Staffeur déjà présent(e) dans la base de donnée : il faut modifier l'entrée et non la créer</div>";
+            return;
+        }
         $stmt=$dbh->prepare('SELECT MAX(id) as id FROM STAFF');
         $stmt->execute();
         $nouvel_id=1;
         while ($row=$stmt->fetch()) {
             $nouvel_id=intval($row['id'])+1;
         }
-        $stmt=$dbh->prepare('INSERT INTO STAFF (id,nom,mail,password) VALUES (?,?,?,?)');
+        $stmt=$dbh->prepare('INSERT INTO STAFF (id,nom,mail,telephone,password) VALUES (?,?,?,?,?)');
         $stmt->bindParam(1, $nouvel_id);
         $stmt->bindParam(2, $nom);
-        $stmt->bindParam(3, $mail);
-        $stmt->bindParam(4, $password);
-        $nom=$_POST['nom'];
-        $mail=$_POST['mail'];
-        $password="a faire"; //pour une future gestion autre que htpasswd
+        $stmt->bindParam(3, $mailstaff);
+        $stmt->bindParam(4, $telephone);
+        $stmt->bindParam(5, $password);
         $stmt->execute();
         $lines = file('../staff/.htpasswd');
         $contenu="";
         foreach ($lines as $line_num => $line) {
 	        $contenu=$contenu.$line;
         }
-        $new_staff=$nom.":".@password_hash("staff", PASSWORD_DEFAULT)."\n";
+        $new_staff="\n".$nom.":".@password_hash("staff", PASSWORD_DEFAULT);
         $contenu=$contenu.$new_staff;
         $h = fopen('../staff/.htpasswd', "w");
         fwrite($h, $contenu);
@@ -50,8 +55,7 @@ function ajout_staff() {
         $msg.="Ton login pour cette partie du site est : ".$nom."     et ton mot de passe est : staff\n\n";
         $msg.="--\nL'équipe SSA";
         $mail->Body=$msg;
-        $mail->AddAddress('jerome.99@hotmail.fr');
-        $mail->AddReplyTo('capucine@sandsystem.com');
+        $mail->AddAddress($mailstaff);
         echo "<BR> Le mail qui sera envoyé : <BR><TEXTAREA style='width: 80%;heigth : 200px;text-align : left;'>".$msg."</TEXTAREA>";
         //if (!$mail->send()) {
         //    echo 'Mailer error: ' . $mail->ErrorInfo;
@@ -60,6 +64,306 @@ function ajout_staff() {
         unset($mail); 
     } catch (Exception $e) { echo "erreur dans la création du staffeur";die();}
 }
+
+function creationCreneau() {
+    global $dbh;
+    try {
+        $res=$dbh->query('SELECT MAX(id) FROM CRENEAUX');
+        $id=1;
+        while ($row=$res->fetch()) {
+            $id=1+intval($row[0]);
+        }
+        $stmt = $dbh->prepare("INSERT INTO CRENEAUX VALUES (?,?,?,?,?,?,?)");
+        $stmt->bindParam(1, $id);
+        $stmt->bindParam(2, $date);
+        $stmt->bindParam(3, $heure);
+        $stmt->bindParam(4, $intitule);
+        $stmt->bindParam(5, $reservation);
+        $stmt->bindParam(6, $nbstaff);
+        $stmt->bindParam(7, $nbdemandes);
+        $date=secu_bdd($_POST['date']);
+        if ($date<date('Y-m-d')) { echo "on ne créé pas de créneaux dans le passé ;)"; return ; }
+        $heure=secu_bdd($_POST['heure']);
+        $intitule=secu_bdd($_POST['intitule']);
+        if (isset($_POST['reservation']) && $_POST['reservation']=="oui") {
+            $reservation="oui";
+        } else {
+            $reservation="non";
+        }
+        $nbstaff=0;
+        $nbdemandes=0;
+        $stmt->execute();
+    } catch (Exception $e) {
+        echo "Erreur dans la saisie des éléments du créneaux";
+    }
+}
+
+function lecture_staff() {
+    global $dbh;
+    try {
+        $tab_res=[];
+        $stmt=$dbh->query('SELECT * FROM STAFF ORDER BY nom');
+        while ($row=$stmt->fetch()) {
+            $tab_res[$row['id']]=['nom'=>$row['nom'],'mail'=>$row['mail'],'telephone'=>$row['telephone']];
+        }
+        return $tab_res;
+    } catch (Exception $e) {
+        echo "Erreur dans la base de données du staff";
+    }
+}
+
+function lire_joueurs_creneau($id) {  //demandes des joueurs pour un créneau
+    global $dbh,$mysql_dbname;
+    try {
+        $stmt=$dbh->prepare('SELECT * FROM  DEMANDES  WHERE idcreneau=?'); 
+        $stmt->bindParam(1,$id);
+        $stmt->execute();
+        return $stmt;
+    } catch (Exception $e) {
+        print "Erreur dans la base de données des créneaux";
+        die();
+    }
+}
+
+function maj_annonce() {
+    global $dbh;
+    if (isset($_POST["annonce"])) {
+        try {
+            $txt=secu_bdd($_POST["annonce"]);
+            $stmt=$dbh->query("SELECT * FROM DIVERS WHERE intitule='annonce'");
+            while ($row=$stmt->fetch()) {
+                $stmt=$dbh->prepare("UPDATE DIVERS SET contenu=? WHERE intitule='annonce'");
+                $stmt->bindParam(1,$txt);
+                $stmt->execute();
+                return  ;              
+            }
+            $stmt=$dbh->prepare("INSERT INTO ANNONCE (intitule,contenu) VALUES ('annonce',?)");
+            $stmt->bindParam(1,$txt);
+            $stmt->execute();
+        } catch (Exception $e) {
+            echo "Erreur dans la mise à jour de l'annonce";
+        }
+    }
+}
+
+function modif_staff() {
+    global $dbh;
+    try {
+        $id=intval($_POST['amodifier']);
+        $nom=secu_bdd($_POST['nom']);
+        $mailstaff=secu_bdd($_POST['mail']);
+        $telephone=secu_bdd($_POST['telephone']);
+        $stmt=$dbh->prepare('UPDATE STAFF SET nom=?,mail=?,telephone=? WHERE id=?');
+        $stmt->bindParam(1,$nom);
+        $stmt->bindParam(2,$mailstaff);
+        $stmt->bindParam(3,$telephone);
+        $stmt->bindParam(4,$id);
+        $stmt->execute();
+    } catch (Exception $e) {
+        echo "Erreur dans la modification du staff";
+    }
+}
+
+function ModifieCreneau() {
+    global $dbh,$les_creneaux;
+    try {
+        $id=intval($_POST['inputid']);
+        if ($id<1) { die();}
+        $heure=secu_bdd($_POST['heure']);
+        $intitule=secu_bdd($_POST['intitule']);
+        if (isset($_POST['reservation']) && $_POST['reservation']=="oui") {
+            $reservation="oui";
+        } else {
+            $reservation="non";
+        }
+        if ($reservation=="non") {
+            $stmt = $dbh->prepare("UPDATE CRENEAUX SET heure=?,intitule=?,reservation=?,nbdemandes=0 WHERE id=?");
+            $stmt2=$dbh->prepare("DELETE FROM demandes WHERE idcreneau=?");
+            $stmt2->bindParam(1,$id);
+            $stmt2->execute();
+        } else {
+            $stmt = $dbh->prepare("UPDATE CRENEAUX SET heure=?,intitule=?,reservation=? WHERE id=?");
+        }
+        $stmt->bindParam(1, $heure);
+        $stmt->bindParam(2, $intitule);
+        $stmt->bindParam(3, $reservation);
+        $stmt->bindParam(4, $id);            
+        $stmt->execute();
+        $les_creneaux=lire_les_creneaux();
+    } catch (Exception $e) {
+        echo "Erreur dans la modification du créneaux";
+    }
+}
+
+
+function remiseazero() {
+    global $dbh,$les_creneaux;
+    try {
+        $msg='CREATE TABLE CRENEAUX ( id INT PRIMARY KEY,date DATE, heure VARCHAR (100), intitule VARCHAR (100),';
+        $msg.='reservation VARCHAR (15),nbstaff INT,nbdemandes INT)';
+        $dbh->query('DROP TABLE IF EXISTS CRENEAUX');
+        $dbh->query($msg);
+        $msg='CREATE TABLE DEMANDES ( id INT PRIMARY KEY,nom VARCHAR (50), prenom VARCHAR (50),';
+        $msg.='mail VARCHAR (200),idcreneau INT)';
+        $dbh->query('DROP TABLE IF EXISTS DEMANDES');
+        $dbh->query($msg);
+        $msg='CREATE TABLE DIVERS ( intitule VARCHAR (100), contenu VARCHAR (5000) )';
+        $dbh->query('DROP TABLE IF EXISTS DIVERS');
+        $dbh->query($msg);
+        $dbh->query('INSERT INTO DIVERS (intitule,contenu) VALUES ("annonce"," ")');
+        $msg='CREATE TABLE GESTIONCRENEAUX ( idcreneau INT,idstaff INT )';
+        $dbh->query('DROP TABLE IF EXISTS GESTIONCRENEAUX');
+        $dbh->query($msg);
+        $msg='CREATE TABLE STAFF ( id INT PRIMARY KEY,nom VARCHAR (50), ';
+        $msg.='mail VARCHAR (200), telephone VARCHAR (50), password VARCHAR (100))';
+        $dbh->query('DROP TABLE IF EXISTS STAFF');
+        $dbh->query($msg);
+        $h = fopen('../staff/.htpasswd', "w");
+        fwrite($h, "");
+        fclose($h);
+  } catch (Exception $e) {
+        echo "Erreur lors de la remise à zéro";
+    }
+
+}
+
+function SupprimeCreneau() {
+    global $dbh,$les_creneaux;
+    try {
+        $stmt = $dbh->prepare("DELETE FROM DEMANDES WHERE idcreneau=?");
+        $stmt->bindParam(1, $id);
+        $stmt2 = $dbh->prepare("DELETE FROM gestioncreneaux WHERE idcreneau=?");
+        $stmt2->bindParam(1, $id);
+        $stmt3 = $dbh->prepare("DELETE FROM CRENEAUX WHERE id=?");
+        $stmt3->bindParam(1, $id);
+        $id=intval($_POST['inputid']);
+        if ($id<1) { die(); }
+        $stmt->execute();
+        $stmt2->execute();
+        $stmt3->execute();
+        $les_creneaux=lire_les_creneaux();
+    } catch (Exception $e) {
+        echo "Erreur dans la suppression du créneaux";
+    }
+}
+
+function supprime_demande($id) {
+    global $dbh,$les_creneaux;
+    try {
+        $stmt=$dbh->prepare("SELECT * FROM DEMANDES WHERE id=?");
+        $stmt->bindParam(1, $id);
+        $stmt->execute();
+        $lademande=$stmt->fetch();
+        $idcreneau=intval($lademande['idcreneau']);
+        $stmt = $dbh->prepare("DELETE FROM DEMANDES WHERE id=?");
+        $stmt->bindParam(1, $id);
+        $stmt->execute();
+        $stmt=$dbh->prepare("SELECT * FROM CRENEAUX WHERE id=?");
+        $stmt->bindParam(1, $idcreneau);
+        $stmt->execute();
+        $row=$stmt->fetch();
+        $nbdemandes=intval($row['nbdemandes'])-1;
+        $stmt=$dbh->prepare("UPDATE CRENEAUX SET nbdemandes=? WHERE id=?");
+        $stmt->bindParam(1, $nbdemandes);
+        $stmt->bindParam(2, $idcreneau);
+        $stmt->execute();        
+    } catch (Exception $e) {
+        echo "Erreur dans la suppression de la demande du joueur";
+    }
+}
+
+function supprime_staff() {
+    global $dbh;
+    try {
+        $id=intval($_POST['amodifier']);
+            if ($id<1) { die(); }
+        $stmt = $dbh->prepare("DELETE FROM STAFF WHERE id=?");
+        $stmt->bindParam(1,$id);
+        $stmt->execute();
+        $stmt = $dbh->prepare("SELECT * FROM GESTIONCRENEAUX WHERE idstaff=?");
+        $stmt->bindParam(1,$id);
+        $stmt->execute();
+        $stmt3=$dbh->prepare('SELECT nbstaff FROM CRENEAUX WHERE id=?');
+        $stmt3->bindParam(1,$idcreneau);
+        $stmt4=$dbh->prepare('UPDATE CRENEAUX SET nbstaff=? WHERE id=?');
+        $stmt4->bindParam(1,$nbstaff);
+        $stmt4->bindParam(2,$idcreneau);
+        $creneauxvides=[];
+        while ($row=$stmt->fetch()) {
+            $idcreneau=intval($row['idcreneau']);
+            $stmt3->execute();
+            $row3=$stmt3->fetch();
+            $nbstaff=intval($row3['nbstaff'])-1;
+            $stmt4->execute();
+            if ($nbstaff==0) {
+                array_push($creneauxvides,$idcreneau);
+            }
+        }
+        if ($creneauxvides!=[]) {
+            echo "<BR><BR> Attention, les créneaux suivants n'ont plus de staff après cette suppression :";
+            foreach ($creneauxvides as $uncreneau) {
+                $lecreneau=trouveCreneau($uncreneau);
+                echo "<BR>".jolie_date($lecreneau['date']).' '.$lecreneau['heure'];;
+            }
+        }
+        $stmt = $dbh->prepare("DELETE FROM GESTIONCRENEAUX WHERE idstaff=?");
+        $stmt->bindParam(1,$id);
+        $stmt->execute();
+        $lines = file('../staff/.htpasswd');
+        $contenu="";
+        foreach ($lines as $line) {
+            if (!(strstr($line,":",true)==$_POST['nom'])) {
+	            $contenu=$contenu.$line;
+            }
+        }
+        $h = fopen('../staff/.htpasswd', "w");
+        fwrite($h, $contenu);
+        fclose($h); 
+    } catch (Exception $e) {
+        echo "Erreur dans la suppression du staffeur";
+    }      
+}
+
+function supprime_tous_creneaux() {
+    global $dbh;
+    try {
+        $stmt = $dbh->query("DELETE FROM CRENEAUX");
+        $stmt = $dbh->query("DELETE FROM DEMANDES");
+        $stmt = $dbh->query("DELETE FROM GESTIONCRENEAUX");
+    } catch (Exception $e) {
+        echo "Erreur dans la suppression de tous les créneaux";
+    }      
+}
+
+function supprime_tout_staff() {
+    global $dbh;
+    try {
+        $stmt = $dbh->query("DELETE FROM STAFF");
+        $stmt = $dbh->query("DELETE FROM GESTIONCRENEAUX");
+        $h = fopen('../staff/.htpasswd', "w");
+        fwrite($h, "");
+        fclose($h);       
+   } catch (Exception $e) {
+        echo "Erreur dans la suppression de tous les membres du staff";
+    }      
+   
+}
+
+function trouveCreneau($id) { // renvoie la ligne de $liste_creneau associé au creneau défini par son id
+    global $les_creneaux;
+    foreach ($les_creneaux as $uncreneau) {
+        if ($uncreneau['id']==$id) {
+            return $uncreneau;
+        }
+    }
+    echo "erreur dans la base de données des créneaux";
+    die();
+}
+
+/// anciennes fonctions à partir d'ici
+/// à enlever quand tout est au point
+///
+
 
 function annuleterrain($idcreneau) {
     global $dbh, $mail_from, $mail_fromName;
@@ -619,87 +923,6 @@ function change_terrain($id) {
     }
 }
 
-function creationCreneau() {
-    global $dbh,$terrainpossible,$couleurpossible,$les_couleurs;
-    try {
-        $res=$dbh->query('SELECT MAX(id) FROM CRENEAUX');
-        $id=1;
-        while ($row=$res->fetch()) {
-            $id=1+intval($row[0]);
-        }
-        $stmt = $dbh->prepare("INSERT INTO CRENEAUX VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,0,0,0,0,0,0,0,0,8,8,8,8,2,2,2,2)");
-        $stmt->bindParam(1, $id);
-        $stmt->bindParam(2, $date);
-        $stmt->bindParam(3, $heure);
-        $stmt->bindParam(4, $reservation);
-        $stmt->bindParam(5, $nbstaff);
-        $stmt->bindParam(6, $feminin);
-        $stmt->bindParam(7, $mixte);
-        $stmt->bindParam(8, $masculin);
-        $stmt->bindParam(9, $t1);
-        $stmt->bindParam(10, $t2);
-        $stmt->bindParam(11, $t3);
-        $stmt->bindParam(12, $t4);
-        $stmt->bindParam(13, $c1);
-        $stmt->bindParam(14, $c2);
-        $stmt->bindParam(15, $c3);
-        $stmt->bindParam(16, $c4);
-        $date=secu_bdd($_POST['date']);
-        $nbstaff=0;
-        if (isset($_POST['reservation']) && $_POST['reservation']=="oui") {
-            $reservation="oui";
-        } else {
-            $reservation="non";
-        }
-        if ($date<date('Y-m-d')) { echo "on ne créé pas de créneaux dans le passé ;)"; return ; }
-        $heure=secu_bdd($_POST['heure']);
-        if (isset($_POST['T1']) &&  in_array($_POST['T1'],$terrainpossible) ) { // && isset($_POST['C1']) && in_array($_POST['C4'],$couleurpossible)) {
-            $t1=secu_bdd($_POST['T1']);
-            $c1=$les_couleurs[$t1]; //$c1=secu_bdd($_POST['C1']);
-        } else {
-            $t1="PAS DE JEU LIBRE";
-            $c1="#CBCBCB";
-        }
-        if (isset($_POST['T2']) &&  in_array($_POST['T2'],$terrainpossible) ) {
-            $t2=secu_bdd($_POST['T2']);
-            $c2=$les_couleurs[$t2]; //$c2=secu_bdd($_POST['C2']);
-        } else {
-            $t2="PAS DE JEU LIBRE";
-            $c2="#CBCBCB";
-        }
-        if (isset($_POST['T3']) &&  in_array($_POST['T3'],$terrainpossible) ) {
-            $t3=secu_bdd($_POST['T3']);
-            $c3=$les_couleurs[$t3]; //$c3=secu_bdd($_POST['C3']);
-        } else {
-            $t3="PAS DE JEU LIBRE";
-            $c3="#CBCBCB";
-        }
-        if (isset($_POST['T4']) &&  in_array($_POST['T4'],$terrainpossible) ) {
-            $t4=secu_bdd($_POST['T4']);
-            $c4=$les_couleurs[$t4]; //$c4=secu_bdd($_POST['C4']);
-        } else {
-            $t4="PAS DE JEU LIBRE";
-            $c4="#CBCBCB";
-        }
-        $feminin=0;
-        $masculin=0;
-        $mixte=0;
-        foreach ([$t1,$t2,$t3,$t4] as $terrain) {
-            if ($terrain=="feminin") {
-                $feminin+=10;
-            }
-            if ($terrain=="mixte") {
-                $mixte+=10;
-            }
-            if ($terrain=="masculin") {
-                $masculin+=10;
-            }
-        }
-        $stmt->execute();
-    } catch (Exception $e) {
-        echo "Erreur dans la saisie des éléments du créneaux";
-    }
-}
 
 function indiquecreneaucomplet($id) {
     global $dbh;
@@ -721,102 +944,8 @@ function indiquecreneaucomplet($id) {
     }
 }
 
-function maj_annonce() {
-    global $dbh;
-    if (isset($_POST["annonce"])) {
-        try {
-            $stmt=$dbh->query("SELECT * FROM ANNONCE WHERE id=1");
-            while ($row=$stmt->fetch()) {
-                $stmt=$dbh->prepare("UPDATE ANNONCE SET texte=? WHERE id=1");
-                $stmt->bindParam(1,$txt);
-                $txt=$_POST["annonce"];
-                $stmt->execute();
-                return  ;              
-            }
-            $stmt=$dbh->prepare("INSERT INTO ANNONCE (id,texte) VALUES (1,?)");
-            $stmt->bindParam(1,$txt);
-            $txt=$_POST["annonce"];
-            $stmt->execute();
-        } catch (Exception $e) {
-            echo "Erreur dans la mise à jour de l'annonce";
-        }
-    }
-}
 
-function ModifieCreneau() {
-    global $dbh, $les_creneaux,$terrainpossible,$couleurpossible,$les_couleurs;
-    try {
-        $stmt = $dbh->prepare("UPDATE CRENEAUX SET T1=?,T2=?,T3=?,T4=?,C1=?,C2=?,C3=?,C4=?,feminin=?,masculin=?,mixte=? WHERE id=?");
-        $stmt->bindParam(1, $t1);
-        $stmt->bindParam(2, $t2);
-        $stmt->bindParam(3, $t3);
-        $stmt->bindParam(4, $t4);
-        $stmt->bindParam(5, $c1);
-        $stmt->bindParam(6, $c2);
-        $stmt->bindParam(7, $c3);
-        $stmt->bindParam(8, $c4);
-        $stmt->bindParam(9, $feminin);
-        $stmt->bindParam(10, $masculin);
-        $stmt->bindParam(11, $mixte);
-        $stmt->bindParam(12, $id);
-        $id=intval($_POST['inputid']);
-        if ($id<1) {throw('erreur');}
-        if (isset($_POST['T1']) &&  in_array($_POST['T1'],$terrainpossible) ) { // && isset($_POST['C1']) && in_array($_POST['C4'],$couleurpossible)) {
-            $t1=secu_bdd($_POST['T1']);
-            $c1=$les_couleurs[$t1]; //$c1=secu_bdd($_POST['C1']);
-        } else {
-            $t1="PAS DE JEU LIBRE";
-            $c1="#CBCBCB";
-        }
-        if (isset($_POST['T2']) &&  in_array($_POST['T2'],$terrainpossible) ) {
-            $t2=secu_bdd($_POST['T2']);
-            $c2=$les_couleurs[$t2]; //$c2=secu_bdd($_POST['C2']);
-        } else {
-            $t2="PAS DE JEU LIBRE";
-            $c2="#CBCBCB";
-        }
-        if (isset($_POST['T3']) &&  in_array($_POST['T3'],$terrainpossible) ) {
-            $t3=secu_bdd($_POST['T3']);
-            $c3=$les_couleurs[$t3]; //$c3=secu_bdd($_POST['C3']);
-        } else {
-            $t3="PAS DE JEU LIBRE";
-            $c3="#CBCBCB";
-        }
-        if (isset($_POST['T4']) &&  in_array($_POST['T4'],$terrainpossible) ) {
-            $t4=secu_bdd($_POST['T4']);
-            $c4=$les_couleurs[$t4]; //$c4=secu_bdd($_POST['C4']);
-        } else {
-            $t4="PAS DE JEU LIBRE";
-            $c4="#CBCBCB";
-        }
-        $stmt2 = $dbh->prepare("SELECT * FROM CRENEAUX WHERE id=?");
-        $stmt2->bindParam(1, $id);
-        $stmt2->execute();
-        $row=$stmt2->fetch();
-        $feminin=0;
-        $masculin=0;
-        $mixte=0;
-        foreach ([1,2,3,4] as $t) {
-            $terrain=[$t1,$t2,$t3,$t4][$t-1];
-            if ($terrain=="feminin") {
-                $feminin+=$row['VMAX'.$t]+$row['AMAX'.$t];
-                $feminin-=($row['V'.$t]+$row['A'.$t]);
-            }
-            if ($terrain=="mixte") {
-                $mixte+=$row['VMAX'.$t]+$row['AMAX'.$t];
-                $mixte-=($row['V'.$t]+$row['A'.$t]);
-            }
-            if ($terrain=="masculin") {
-                $masculin+=$row['VMAX'.$t]+$row['AMAX'.$t];
-                $masculin-=($row['V'.$t]+$row['A'.$t]);
-            }
-        }
-        $stmt->execute();
-        $les_creneaux=lire_les_creneaux();
-    } catch (Exception $e) {
-        echo "Erreur dans la modification du créneaux";
-    }
-}
+
 
 function pdf($str) {  // décode une chaine protégée pour l'affichage dans le PDF
     return utf8_decode(html_entity_decode($str));
@@ -883,37 +1012,6 @@ function reinitialise_creneau($id) { // remets tout le monde en attente en fait
         echo "Erreur dans la reinitialisation du créneau";
     }
 
-}
-
-function SupprimeCreneau() {
-    global $dbh,$les_creneaux;
-    try {
-        $stmt = $dbh->prepare("DELETE FROM DEMANDES WHERE idcreneau=?");
-        $stmt->bindParam(1, $id);
-        $stmt2 = $dbh->prepare("DELETE FROM RESULTATS WHERE idcreneau=?");
-        $stmt2->bindParam(1, $id);
-        $stmt3 = $dbh->prepare("DELETE FROM CRENEAUX WHERE id=?");
-        $stmt3->bindParam(1, $id);
-        $id=intval($_POST['inputid']);
-        if ($id<1) { throw('erreur'); }
-        $stmt->execute();
-        $stmt2->execute();
-        $stmt3->execute();
-        $les_creneaux=lire_les_creneaux();
-    } catch (Exception $e) {
-        echo "Erreur dans la suppression du créneaux";
-    }
-}
-
-function trouveCreneau($id) { // renvoie la ligne de $liste_creneau associé au creneau défini par son id
-    global $les_creneaux;
-    foreach ($les_creneaux as $uncreneau) {
-        if ($uncreneau['id']==$id) {
-            return $uncreneau;
-        }
-    }
-    echo "erreur dans la base de données des créneaux";
-    die();
 }
 
 function valideavecmail($id) {
