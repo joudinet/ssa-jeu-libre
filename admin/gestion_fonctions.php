@@ -211,7 +211,7 @@ function remiseazero() {
         $dbh->query('DROP TABLE IF EXISTS DIVERS');
         $dbh->query($msg);
         $dbh->query('INSERT INTO DIVERS (intitule,contenu) VALUES ("annonce"," ")');
-        $msg='CREATE TABLE GESTIONCRENEAUX ( idcreneau INT,idstaff INT )';
+        $msg='CREATE TABLE GESTIONCRENEAUX ( idcreneau INT,idstaff INT, statut VARCHAR (15) )';
         $dbh->query('DROP TABLE IF EXISTS GESTIONCRENEAUX');
         $dbh->query($msg);
         $msg='CREATE TABLE STAFF ( id INT PRIMARY KEY,nom VARCHAR (50), ';
@@ -340,6 +340,7 @@ function supprime_tout_staff() {
     try {
         $stmt = $dbh->query("DELETE FROM STAFF");
         $stmt = $dbh->query("DELETE FROM GESTIONCRENEAUX");
+	$stmt = $dbh->query("UPDATE CRENEAUX SET nbstaff=0");
         $h = fopen('../staff/.htpasswd', "w");
         fwrite($h, "");
         fclose($h);       

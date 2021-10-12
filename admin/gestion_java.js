@@ -109,9 +109,11 @@ function reinitCreneau(id) {
 }
 
 function supprimeCreneau(id) { 
-    but.value="supprimecreneau"
-    inputid.value=id
-    Formulaire.submit()
+    if (confirm("Etes-vous sûr de vouloir supprimer le créneau?")) {
+	but.value="supprimecreneau"
+    	inputid.value=id
+    	Formulaire.submit()
+    }
 }
 
 function valideAvecMail(id) {

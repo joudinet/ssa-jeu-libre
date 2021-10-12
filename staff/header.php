@@ -11,7 +11,7 @@
 <body>    
     <nav class="menu">
         <ul>
-             <li><a href="index.php">Inscription gestion</a></li><!-- ' -->
+             <li><a href="index.php">Gérer mes présences</a></li><!-- ' -->
              <li><a href="recapitulatif.php">Récapitulatif</a></li>
              <li><a href="coordonnees.php">Coordonnées du staff</a></li>
          </ul>
