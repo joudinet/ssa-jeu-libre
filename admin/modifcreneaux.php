@@ -39,7 +39,7 @@ if (count($les_creneaux)==0) {
                 <div></div>
  <?php
         echo '<DIV><BUTTON type="button" onclick="supprimeCreneau('.$id.')">Supprimer ce créneau</BUTTON></DIV>';
-        echo '<INPUT type="submit" value="Modifier ce créneau"></FORM>';
+        echo '<INPUT type="submit" value="Enregistrer les modifs de ce créneau"></FORM>';
         echo '<BR><BR><BR>';
     }
 }

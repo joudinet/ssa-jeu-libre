@@ -9,7 +9,7 @@ if (pas_un_staffeur($staffeur)) { die(); }
 ferme_bdd();
 ?>
 
-    
+    En <span style='color:red'>rouge</span> les personnes disponibles si besoin
     <div class="creneaux_index_staff">
 <?php 
 foreach ($les_creneaux as $un_creneau) {
@@ -25,7 +25,10 @@ foreach ($les_creneaux as $un_creneau) {
     echo '<div>';
     if (array_key_exists($id,$les_staffeurs)) {
         foreach ($les_staffeurs[$id] as $nom) {
-            echo $nom.", ";
+            if ($nom[1]=='oui') {echo $nom[0].", ";}
+        }
+        foreach ($les_staffeurs[$id] as $nom) {
+            if ($nom[1]=='sibesoin') {echo "<span style='color:red'>".$nom[0]."</span>, ";}
         }
     }
     echo '</div>';
