@@ -38,9 +38,9 @@ function ajout_staff() {
         $lines = file('../staff/.htpasswd');
         $contenu="";
         foreach ($lines as $line_num => $line) {
-	        $contenu=$contenu.$line;
+            $contenu=$contenu.$line;
         }
-        $new_staff="\n".$nom.":".@password_hash("staff", PASSWORD_DEFAULT);
+        $new_staff=$nom.":".password_hash("staff", PASSWORD_DEFAULT)."\n";
         $contenu=$contenu.$new_staff;
         $h = fopen('../staff/.htpasswd', "w");
         fwrite($h, $contenu);
@@ -61,7 +61,7 @@ function ajout_staff() {
         //    echo 'Mailer error: ' . $mail->ErrorInfo;
         //}
         $mail->SmtpClose();
-        unset($mail); 
+        unset($mail);
     } catch (Exception $e) { echo "erreur dans la création du staffeur";die();}
 }
 
@@ -115,7 +115,7 @@ function lecture_staff() {
 function lire_joueurs_creneau($id) {  //demandes des joueurs pour un créneau
     global $dbh,$mysql_dbname;
     try {
-        $stmt=$dbh->prepare('SELECT * FROM  DEMANDES  WHERE idcreneau=?'); 
+        $stmt=$dbh->prepare('SELECT * FROM  DEMANDES  WHERE idcreneau=?');
         $stmt->bindParam(1,$id);
         $stmt->execute();
         return $stmt;
@@ -135,7 +135,7 @@ function maj_annonce() {
                 $stmt=$dbh->prepare("UPDATE DIVERS SET contenu=? WHERE intitule='annonce'");
                 $stmt->bindParam(1,$txt);
                 $stmt->execute();
-                return  ;              
+                return  ;
             }
             $stmt=$dbh->prepare("INSERT INTO ANNONCE (intitule,contenu) VALUES ('annonce',?)");
             $stmt->bindParam(1,$txt);
@@ -187,7 +187,7 @@ function ModifieCreneau() {
         $stmt->bindParam(1, $heure);
         $stmt->bindParam(2, $intitule);
         $stmt->bindParam(3, $reservation);
-        $stmt->bindParam(4, $id);            
+        $stmt->bindParam(4, $id);
         $stmt->execute();
         $les_creneaux=lire_les_creneaux();
     } catch (Exception $e) {
@@ -266,7 +266,7 @@ function supprime_demande($id) {
         $stmt=$dbh->prepare("UPDATE CRENEAUX SET nbdemandes=? WHERE id=?");
         $stmt->bindParam(1, $nbdemandes);
         $stmt->bindParam(2, $idcreneau);
-        $stmt->execute();        
+        $stmt->execute();
     } catch (Exception $e) {
         echo "Erreur dans la suppression de la demande du joueur";
     }
@@ -313,15 +313,15 @@ function supprime_staff() {
         $contenu="";
         foreach ($lines as $line) {
             if (!(strstr($line,":",true)==$_POST['nom'])) {
-	            $contenu=$contenu.$line;
+                $contenu=$contenu.$line;
             }
         }
         $h = fopen('../staff/.htpasswd', "w");
         fwrite($h, $contenu);
-        fclose($h); 
+        fclose($h);
     } catch (Exception $e) {
         echo "Erreur dans la suppression du staffeur";
-    }      
+    }
 }
 
 function supprime_tous_creneaux() {
@@ -332,7 +332,7 @@ function supprime_tous_creneaux() {
         $stmt = $dbh->query("DELETE FROM GESTIONCRENEAUX");
     } catch (Exception $e) {
         echo "Erreur dans la suppression de tous les créneaux";
-    }      
+    }
 }
 
 function supprime_tout_staff() {
@@ -340,14 +340,14 @@ function supprime_tout_staff() {
     try {
         $stmt = $dbh->query("DELETE FROM STAFF");
         $stmt = $dbh->query("DELETE FROM GESTIONCRENEAUX");
-	$stmt = $dbh->query("UPDATE CRENEAUX SET nbstaff=0");
+    $stmt = $dbh->query("UPDATE CRENEAUX SET nbstaff=0");
         $h = fopen('../staff/.htpasswd', "w");
         fwrite($h, "");
-        fclose($h);       
+        fclose($h);
    } catch (Exception $e) {
         echo "Erreur dans la suppression de tous les membres du staff";
-    }      
-   
+    }
+
 }
 
 function trouveCreneau($id) { // renvoie la ligne de $liste_creneau associé au creneau défini par son id
@@ -420,12 +420,12 @@ EOD;
                 echo 'Mailer error: ' . $mail->ErrorInfo;
             }
             $mail->SmtpClose();
-            unset($mail); 
+            unset($mail);
         }
     } catch (Exception $e) {
         echo "Erreur dans l'annulation de terrain";
     }
-    
+
 }
 
 function creationpdf($les_creneaux_demandes) {
@@ -523,7 +523,7 @@ function creationenvoi($les_creneaux_demandes) {
     $mail->ContentType = 'text/plain';
     $mail->Subject='Créneaux de jeu libre';
     $mail->Body= <<<EOD
-Hello les beacheurs, 😎 
+Hello les beacheurs, 😎
 
 Vous trouverez en pièce-jointe le planning pour les jours à venir.
 
@@ -531,7 +531,7 @@ En cas d'annulation, merci de prévenir le plus tôt possible en répondant à c
 
 Pour rappel, toute personne n'ayant pas annulé sa réservation au plus tard la veille du créneau (sauf cas extrême) se verra refuser l'accès au site pour la semaine suivante.
 
-À bientôt sur les terrains, 😊 
+À bientôt sur les terrains, 😊
 -- 
 L'équipe SSA
 EOD;
@@ -689,7 +689,7 @@ function envoie_mail($prenom,$target,$type_mail,$textecreneau) { // type_mail : 
         //echo 'Mailer Error: ' . $mail->ErrorInfo;
         $mail->SmtpClose();
         unset($mail);
-        return false; 
+        return false;
     }
     //echo "<BR> Le mail qui sera envoyé : <BR><TEXTAREA style='width: 80%;heigth : 50px;text-align : left;'>".$msg."</TEXTAREA>";
     $mail->SmtpClose();
