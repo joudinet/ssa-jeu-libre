@@ -15,15 +15,16 @@ function click_creneau(id,action='avecclick') {
 	}).then(function(res){ return res.json();})
 	  .then(function(res){
 		statut=res[0]
-		nb=res[1]
+		nb=parseInt(res[1],10)
+		if (isNaN(nb) || nb<-1 || nb>10000) { return }
 		if (statut=="oui") { 
 			label.style.backgroundColor="#FAB315"
 			label.style.color="black"
 			label.innerHTML="Présent(e)";
-			if (nb=="0") {
+			if (nb==0) {
 			   nombre.innerHTML=nb+" personne(s)"
 			   titre.className="creneauvide"
-			} else if (nb!="-1") {
+			} else if (nb!=-1) {
 			   nombre.innerHTML=nb+" personne(s)"
 			   titre.className=""
 			}   
@@ -31,16 +32,16 @@ function click_creneau(id,action='avecclick') {
 			label.style.backgroundColor="#2687c9"
 			label.style.color="white"
 			label.innerHTML="Absent(e)";
-			if (nb=="0") {
+			if (nb==0) {
 			   nombre.innerHTML=nb+" personne(s)"
 			   titre.className="creneauvide"
-			} else if (nb!="-1") {
+			} else if (nb!=-1) {
 			   nombre.innerHTML=nb+" personne(s)"
 			   titre.className=""
 			}   
 		} else if (statut=="sibesoin") { 
 			if (action=='avecclick') {
-			if (nb=="0") {
+			if (nb==0) {
 				alert('Tu es le seul staffeur sur ce créneau. Es-tu sûr de vouloir te désinscrire du créneau ? N’oublie pas de prévenir de ton absence sur le groupe What’s App du staff pour trouver un-e remplaçant-e.')
 				mail_creneau_vide(titre.innerHTML)
 			} else {
@@ -71,5 +72,5 @@ function mail_creneau_vide(titre) {
   	  },
   	  body: formData
 	}).then(function(res){ return res.json();})
-	  .then(function(res){ console.log(res);})	  
+	  .then(function(res){ })	  
 }

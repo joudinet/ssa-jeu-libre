@@ -11,7 +11,12 @@ require '../PHPMailer/src/Exception.php';
 function ajout_staff() {
     global $dbh, $mail_from, $mail_fromName;
     try {
-        $nom=secu_bdd($_POST['nom']);
+        $nomtmp=secu_bdd($_POST['nom']);
+	$nom = preg_replace('`([^a-zA-Z0-9 ])`i', '', $nomtmp); 
+	if (!($nomtmp==$nom)) {
+		echo "<BR>nom incorrect pour le staff : uniquement des lettres sans accent, des chiffres et des espaces";
+		return ;
+	}
         $mailstaff=secu_bdd($_POST['mail']);
         $telephone=secu_bdd($_POST['telephone']);
         $password="a faire"; //pour une future gestion autre que htpasswd
@@ -56,10 +61,10 @@ function ajout_staff() {
         $msg.="--\nL'équipe SSA";
         $mail->Body=$msg;
         $mail->AddAddress($mailstaff);
-        echo "<BR> Le mail qui sera envoyé : <BR><TEXTAREA style='width: 80%;heigth : 200px;text-align : left;'>".$msg."</TEXTAREA>";
-        //if (!$mail->send()) {
-        //    echo 'Mailer error: ' . $mail->ErrorInfo;
-        //}
+        //echo "<BR> Le mail qui sera envoyé : <BR><TEXTAREA style='width: 80%;heigth : 200px;text-align : left;'>".$msg."</TEXTAREA>";
+        if (!$mail->send()) {
+            echo 'Mailer error: ' . $mail->ErrorInfo;
+        }
         $mail->SmtpClose();
         unset($mail);
     } catch (Exception $e) { echo "erreur dans la création du staffeur";die();}
@@ -148,17 +153,37 @@ function maj_annonce() {
 
 function modif_staff() {
     global $dbh;
-    try {
+    try { 
+	if (!isset($_POST['amodifier'])) { return ;}
         $id=intval($_POST['amodifier']);
         $nom=secu_bdd($_POST['nom']);
         $mailstaff=secu_bdd($_POST['mail']);
         $telephone=secu_bdd($_POST['telephone']);
+        $stmt=$dbh->prepare('SELECT nom FROM STAFF WHERE id=?');
+        $stmt->bindParam(1,$id);
+        $stmt->execute();
+	$anciennom="*";
+        while ($row=$stmt->fetch()) {
+		$anciennom=$row['nom'];
+	}
         $stmt=$dbh->prepare('UPDATE STAFF SET nom=?,mail=?,telephone=? WHERE id=?');
         $stmt->bindParam(1,$nom);
         $stmt->bindParam(2,$mailstaff);
         $stmt->bindParam(3,$telephone);
         $stmt->bindParam(4,$id);
         $stmt->execute();
+        $lines = file('../staff/.htpasswd');  // réécriture du htpasswd : bourrin mais au cas ou le login a changé
+        $contenu="";
+        foreach ($lines as $line_num => $line) {
+            if (!(strstr($line,":",true)==$anciennom)) {
+            	$contenu=$contenu.$line;
+	    }
+        }
+        $new_staff=$nom.":".password_hash("staff", PASSWORD_DEFAULT)."\n";
+        $contenu=$contenu.$new_staff;
+        $h = fopen('../staff/.htpasswd', "w");
+        fwrite($h, $contenu);
+        fclose($h);
     } catch (Exception $e) {
         echo "Erreur dans la modification du staff";
     }
@@ -275,12 +300,13 @@ function supprime_demande($id) {
 function supprime_staff() {
     global $dbh;
     try {
+	if (!isset($_POST['amodifier'])) { return ;}
         $id=intval($_POST['amodifier']);
             if ($id<1) { die(); }
         $stmt = $dbh->prepare("DELETE FROM STAFF WHERE id=?");
         $stmt->bindParam(1,$id);
         $stmt->execute();
-        $stmt = $dbh->prepare("SELECT * FROM GESTIONCRENEAUX WHERE idstaff=?");
+        $stmt = $dbh->prepare("SELECT * FROM GESTIONCRENEAUX WHERE idstaff=? AND statut='oui'");
         $stmt->bindParam(1,$id);
         $stmt->execute();
         $stmt3=$dbh->prepare('SELECT nbstaff FROM CRENEAUX WHERE id=?');
