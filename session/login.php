@@ -48,7 +48,7 @@ label {
      			<label for="login">Login :</label>
      			<input type="text" name="login" id="login" placeholder="Entrez votre login" required/>
      			<label for="password">Password :</label>
-     			<input type="text" name="password" id="password" placeholder="Entrez votre mot de passe" required>
+     			<input type="password" name="password" id="password" placeholder="Entrez votre mot de passe" required>
      			<input type="submit" name="Envoyer" value="Envoyer"/>
      		</fieldset>
      	</form>

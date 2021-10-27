@@ -17,7 +17,7 @@ function creation_compte($login) { // création d'un nouveau compte
 	return false;
 }
 
-function maj_compte($login,$password) { // modif du mot de passe d'un nouveau compte
+function maj_compte($login,$password) { // modif du mot de passe d'un compte
 	global $dbh,$mysql_tablename,$mysql_loginname,$mysql_passwordname,$mysql_liste_admin;
 	if (in_array($login,$mysql_liste_admin)) {
 		return false;
