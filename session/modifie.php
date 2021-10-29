@@ -10,24 +10,42 @@ require "private/fonctions.php";
 // Traitement du formulaire après envoi
 $tentativeModification=false;
 $modificationCorrecte=false; //utilisé en cas de tentative de modification uniquement
+$tentativeModificationMail=false;
+$modificationMailCorrecte=false; //utilisé en cas de tentative de modification uniquement
 $typeErreur=""; // inutile : jamais utilisé sans être redéfini. Juste au cas où
-if (isset($_POST["password"]) && isset($_POST["newpassword"]) && isset($_POST["newpasswordbis"])){
-	$tentativeModification=true;
-    if (ouvre_bdd()) {
-        if (!verifie_compte($_SESSION["login"],$_POST["password"])) {
-            $typeErreur="mot de passe incorrect";
-        } elseif ($_POST["newpassword"]!=$_POST["newpasswordbis"]) {
-            $typeErreur="entrez deux fois le novueau mot de passe";
-        } elseif (securise_login($_POST["newpassword"])!=$_POST["newpassword"]) {
-            $typeErreur="nouveau mot de passe incorrect";
-        } else {
-            $modificationCorrecte=maj_compte($_SESSION["login"],$_POST["newpassword"]);
-            $typeErreur="impossible de modifier le mot de passe";
-        }
-        ferme_bdd();
-    } else {
-        $typeErreur="base de données inaccessible";
-    }
+if (isset($_POST["password"])) {
+	if (isset($_POST["newpassword"]) && isset($_POST["newpasswordbis"])){
+		$tentativeModification=true;
+		if (ouvre_bdd()) {
+			if (!verifie_compte($_SESSION["login"],$_POST["password"])) {
+				$typeErreur="mot de passe incorrect";
+			} elseif ($_POST["newpassword"]!=$_POST["newpasswordbis"]) {
+				$typeErreur="entrez deux fois le nouveau mot de passe";
+			} elseif (securise_login($_POST["newpassword"])!=$_POST["newpassword"]) {
+				$typeErreur="nouveau mot de passe incorrect";
+			} else {
+				$modificationCorrecte=maj_compte($_SESSION["login"],$_POST["newpassword"]);
+				$typeErreur="impossible de modifier le mot de passe";
+			}
+			ferme_bdd();
+		} else {
+			$typeErreur="base de données inaccessible";
+		}
+	} elseif (isset($_POST["newmail"]) && $mail_login) {
+		$tentativeModificationMail=true;
+		if (ouvre_bdd()) {
+			if (!verifie_compte($_SESSION["login"],$_POST["password"])) {
+				$typeErreur="mot de passe incorrect";
+			} else {
+				$modificationMailCorrecte=maj_compte_mail($_SESSION["login"],$_POST["newmail"]);
+				$typeErreur="impossible de modifier l'adresse mail'";
+			}
+			ferme_bdd();
+		} else {
+			$typeErreur="base de données inaccessible";
+		}
+
+	}
 }?>
 
 <!doctype html>
@@ -73,5 +91,27 @@ Pour la page d'index c'est <a href="index.php"> ici </a> <BR>
      		</fieldset>
      	</form>
      </div>
+	 <?php if ($mail_login) { ?>
+     <div class="login_box">
+     	<form action="" method="post">
+     		<fieldset>
+     			<legend>Modification de l'adresse mail de secours</legend>
+     			<?php if ($tentativeModificationMail) {
+				if ($modificationMailCorrecte) {
+					echo "<p style=\"color:red; \"> l'adresse mail a été correctement modifiée </p>";
+				} else {
+					echo "<p style=\"color:red; \"> l'adresse mail n'a pas été correctement modifiée </p>";
+					echo "<p style=\"color:red; \">".$typeErreur."</p>";
+				}
+     			      } ?>
+     			<label for="password">Mot de passe :</label>
+     			<input type="password" name="password" id="password" placeholder="Entrez votre mot de passe" required>
+     			<label for="newmail">Nouvelle adresse mail :</label>
+     			<input type="email" name="newmail" id="newmail" placeholder="Entrez votre nouveau mail" required>
+     			<input type="submit" value="Envoyer"/>
+     		</fieldset>
+     	</form>
+     </div>
+	 <?php } ?>
 </body>
 </html>

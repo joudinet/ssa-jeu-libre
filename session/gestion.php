@@ -21,8 +21,13 @@ if (isset($_POST["login"])){
 		if (test_existence_compte($_POST["login"])) {
 			$typeErreur="compte déjà existant";
 		} elseif (creation_compte($_POST["login"])) {
-			$creationCorrecte=maj_compte($_POST["login"],$_POST["password"]);
-			$typeErreur="impossible d'attribuer un mot de passe à ce compte";
+			if ($mail_login) {
+				$creationCorrecte=maj_compte($_POST["login"],$_POST["password"]);
+				$creationCorrecte=$creationCorrecte && maj_compte_mail($_POST["login"],$_POST["mail"]);
+			} else {
+				$creationCorrecte=maj_compte($_POST["login"],$_POST["password"]);
+			}
+			$typeErreur="impossible d'attribuer un mot de passe et/ou mail à ce compte";
 		} else {
 			$typeErreur="impossible de créer ce compte";
 		}
@@ -83,8 +88,12 @@ Pour la page d'index c'est <a href="index.php"> ici </a> <BR>
      			<label for="login">Login :</label>
      			<input type="text" name="login" id="login" placeholder="Entrez votre login" required/>
      			<label for="password">Password :</label>
-     			<input type="text" name="password" id="password" placeholder="Entrez votre mot de passe" required>
-     			<input type="submit" value="Envoyer"/>
+     			<input type="password" name="password" id="password" placeholder="Entrez votre mot de passe" required>
+				<?php if ($mail_login) {?>
+				<label for="mail">Mail :</label>
+     			<input type="email" name="mail" id="mail" placeholder="Entrez votre mail"/>
+				<?php }?>
+    			<input type="submit" value="Envoyer"/>
      		</fieldset>
      	</form>
      </div>

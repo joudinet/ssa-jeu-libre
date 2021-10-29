@@ -239,8 +239,9 @@ function remiseazero() {
         $msg='CREATE TABLE GESTIONCRENEAUX ( idcreneau INT,idstaff INT, statut VARCHAR (15) )';
         $dbh->query('DROP TABLE IF EXISTS GESTIONCRENEAUX');
         $dbh->query($msg);
-        $msg='CREATE TABLE STAFF ( id INT PRIMARY KEY,nom VARCHAR (50), ';
-        $msg.='mail VARCHAR (200), telephone VARCHAR (50), password VARCHAR (100))';
+        $msg='CREATE TABLE STAFF ( id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,nom VARCHAR (50), ';
+        $msg.='mail VARCHAR (200), telephone VARCHAR (50), password VARCHAR (100)),';
+        $msg.='nonce VARCHAR (200), noncetime INT';
         $dbh->query('DROP TABLE IF EXISTS STAFF');
         $dbh->query($msg);
         $h = fopen('../staff/.htpasswd', "w");
