@@ -9,6 +9,7 @@ let inputid=document.getElementById("inputid")
 let but=document.getElementById("but")
 
 function ajusteDonneesStaff() {
+    if (leStaff[amodifier.value]==null) { return }
     nommodif.value=leStaff[amodifier.value]['nom']
     mailmodif.value=leStaff[amodifier.value]['mail']
     telephonemodif.value=leStaff[amodifier.value]['telephone']

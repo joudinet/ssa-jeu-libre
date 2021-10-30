@@ -3,16 +3,16 @@
 // Host
 $mysql_host='localhost';
 // Database name
-$mysql_dbname='ssa';
+$mysql_dbname='';
 // Credentials
-$mysql_user='SSAUser';
-$mysql_pass='cg4@QZm[I)TmJvLf';
+$mysql_user='';
+$mysql_pass='';
 
 // Mail data
-$mail_from='jerome.99@hotmail.fr';
-$mail_fromName='Jerome test local';
+$mail_from='';
+$mail_fromName='';
 
 // Google reCAPTCHA secret key
-$captcha_secretKey='6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe';
-$captcha_publicKey='6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI';
+$captcha_secretKey='';
+$captcha_publicKey='';
 ?>

@@ -1,9 +1,9 @@
 
 <?php require "header.php"; 
-ouvre_bdd();
-if (isset($_POST['annonce'])) {
+ouvre_bdd(); 
+if (isset($_POST['annonce'])) { 
     maj_annonce();
-} elseif (isset($_POST['nom']) && isset($_POST['but'])) {
+} elseif (isset($_POST['nom']) && isset($_POST['but'])) { 
     if ($_POST['but']=="ajout") {
         ajout_staff();
     } elseif ($_POST['but']=="modif") {
@@ -12,7 +12,7 @@ if (isset($_POST['annonce'])) {
         $les_creneaux=lire_les_creneaux();
         supprime_staff();
     }
-}
+} 
 $annonce=lire_annonce() ;
 $le_staff=lecture_staff();
 ferme_bdd();
@@ -35,7 +35,7 @@ ferme_bdd();
                 <legend>Ajout d'une personne au staff :</legend><BR>
          <div class="perso"> <!-- grid layout on fieldset is buggy on Chrome -->
             <label for="nom">Nom</label>
-            <input id="nom" name="nom" />
+            <input id="nom" name="nom"/>
             <label for="mail">Mail</label>
             <input type="email" id="mail" name="mail" />
             <label for="telephone">Téléphone</label>
