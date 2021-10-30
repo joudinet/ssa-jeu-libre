@@ -108,6 +108,7 @@ function lecture_staff() {
     try {
         $tab_res=[];
         $stmt=$dbh->query('SELECT * FROM STAFF ORDER BY nom');
+        $stmt->execute();
         while ($row=$stmt->fetch()) {
             $tab_res[$row['id']]=['nom'=>$row['nom'],'mail'=>$row['mail'],'telephone'=>$row['telephone']];
         }
