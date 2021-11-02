@@ -30,7 +30,7 @@ if (count($les_creneaux)==0) {
                     <INPUT id="intitule" name="intitule" value="<?php echo $un_creneau['intitule']?>">
                 </DIV>
                 <DIV class="item_formulaire_index">
-                    <LABEL> Avec réservation ? : </LABEL>
+                    <LABEL> Avec inscription ? : </LABEL>
                     <SELECT id="reservation" name="reservation">
                         <OPTION value="non" <?php if ( $un_creneau['reservation']!='oui') {echo "selected";}?>> non</OPTION>
                         <OPTION value="oui" <?php if ( $un_creneau['reservation']=='oui') {echo "selected";}?>> oui</OPTION>
