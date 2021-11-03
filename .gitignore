@@ -1,4 +1,6 @@
 *~
+.htaccess
+.htpasswd
 htaccess
 htpasswd
 config.php
