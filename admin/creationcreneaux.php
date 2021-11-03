@@ -25,7 +25,7 @@ ferme_bdd();
                     <INPUT id="intitule" name="intitule" value="jeu-libre">
                 </DIV>
                 <DIV class="item_formulaire_index">
-                    <LABEL> Avec réservation ? : </LABEL>
+                    <LABEL> Avec inscription ? : </LABEL>
                     <SELECT id="reservation" name="reservation">
                         <OPTION value="non" selected > non</OPTION>
                         <OPTION value="oui"> oui</OPTION>

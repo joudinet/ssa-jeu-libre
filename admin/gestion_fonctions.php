@@ -56,7 +56,7 @@ function ajout_staff() {
         $mail->ContentType = 'text/plain';
         $mail->Subject='Bienvenue dans le staff jeu-libre';
         $msg="Bonjour ".$nom."\n\nTu es maintenant dans la liste des personnes aidant à gérer les créneaux jeu-libre de Sand System et nous t'en remercions !\n ";
-        $msg.="\nPour t'inscrire sur les créneaux de gestion, il suffit de suivre le lien suivant : https://sandsystem.com/jeu-libre/staff\n\n";
+        $msg.="\nPour t'inscrire sur les créneaux de gestion, il suffit de suivre le lien suivant : https://sandsystem.com/jeu-libre/staff/\n\n";
         $msg.="Ton login pour cette partie du site est : ".$nom."     et ton mot de passe est : staff\n\n";
         $msg.="--\nL'équipe SSA";
         $mail->Body=$msg;

@@ -29,7 +29,14 @@ function click_creneau(id,action='avecclick') {
 			   titre.className=""
 			}   
 		} else if (statut=="non") { 
-			label.style.backgroundColor="#2687c9"
+			if (action=='avecclick') {
+				if (nb==0) {
+					alert('Tu es le seul staffeur sur ce créneau. Es-tu sûr de vouloir te désinscrire du créneau ? N’oublie pas de prévenir de ton absence sur le groupe What’s App du staff pour trouver un-e remplaçant-e.')
+					mail_creneau_vide(titre.innerHTML)
+				} else {
+					//alert('Es-tu sûr de vouloir te désinscrire du créneau ? Être plusieurs staffeurs facilite la gestion du créneau.')
+				} }
+				label.style.backgroundColor="#2687c9"
 			label.style.color="white"
 			label.innerHTML="Absent(e)";
 			if (nb==0) {
@@ -40,13 +47,6 @@ function click_creneau(id,action='avecclick') {
 			   titre.className=""
 			}   
 		} else if (statut=="sibesoin") { 
-			if (action=='avecclick') {
-			if (nb==0) {
-				alert('Tu es le seul staffeur sur ce créneau. Es-tu sûr de vouloir te désinscrire du créneau ? N’oublie pas de prévenir de ton absence sur le groupe What’s App du staff pour trouver un-e remplaçant-e.')
-				mail_creneau_vide(titre.innerHTML)
-			} else {
-				//alert('Es-tu sûr de vouloir te désinscrire du créneau ? Être plusieurs staffeurs facilite la gestion du créneau.')
-			} }
 			label.style.backgroundColor="#2020c9"
 			label.style.color="white"
 			label.innerHTML="Si besoin";

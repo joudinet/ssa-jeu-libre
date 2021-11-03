@@ -3,10 +3,10 @@
 // Host
 $mysql_host='localhost';
 // Database name
-$mysql_dbname='';
+$mysql_dbname='ssa';
 // Credentials
-$mysql_user='';
-$mysql_pass='';
+$mysql_user='SSAUser';
+$mysql_pass='test';
 
 // Mail data
 $mail_from='';
